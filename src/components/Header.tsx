@@ -1,5 +1,3 @@
-import { ThemeToggle } from "./ThemeToggle";
-
 interface HeaderProps {
   title: string;
   subtitle?: string;
@@ -13,9 +11,6 @@ export function Header({ title, subtitle }: HeaderProps) {
         {subtitle && (
           <p className="text-xs md:text-sm text-muted-foreground">{subtitle}</p>
         )}
-      </div>
-      <div className="flex items-center space-x-2">
-        <ThemeToggle />
       </div>
     </header>
   );

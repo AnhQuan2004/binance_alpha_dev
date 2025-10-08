@@ -22,7 +22,6 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
   const abortControllerRef = useRef<AbortController | null>(null);
   const retryCountRef = useRef(0);
   const timeoutRef = useRef<number | null>(null);
-  const isVisibleRef = useRef(true);
   const lastSeenIdRef = useRef<number | null>(null);
   const initialLoadRef = useRef(true);
 
@@ -90,7 +89,7 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
       retryCountRef.current = 0;
       
       // Schedule next fetch with normal interval (1s)
-      scheduleNextFetch(isVisibleRef.current ? 1000 : 5000);
+      scheduleNextFetch(1000);
       
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -116,38 +115,17 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
     }
     
     timeoutRef.current = window.setTimeout(() => {
-      if (isVisibleRef.current || delay > 1000) { // Always fetch on backoff
-        fetchData();
-      }
+      fetchData();
     }, delay);
   }, [fetchData]);
 
   useEffect(() => {
-    // Handle visibility change
-    const handleVisibilityChange = () => {
-      isVisibleRef.current = !document.hidden;
-      
-      if (isVisibleRef.current) {
-        // Tab became visible - fetch immediately
-        fetchData();
-      } else {
-        // Tab hidden - reschedule with longer interval if we're not in backoff
-        if (retryCountRef.current === 0) {
-          scheduleNextFetch(5000);
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     // Initial fetch with stagger delay
     const initialTimeout = setTimeout(() => {
       fetchData();
     }, staggerDelay);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }

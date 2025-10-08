@@ -44,27 +44,22 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
   }, [data]);
 
   return (
-    <div className="flex flex-col h-full bg-card rounded-lg border border-border overflow-hidden">
+    <div className="flex flex-col h-full bg-background rounded-lg overflow-hidden font-sans">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-header-bg border-b border-border shadow-sm">
-        <div className="px-4 py-3 flex items-center space-x-2 bg-card/50">
-          <TokenIcon token={token} size="sm" />
+      <div className="sticky top-0 z-10">
+        <div className="px-4 py-3">
           <div>
-            <h2 className="text-sm font-semibold text-foreground flex items-center">
+            <h2 className="text-lg font-semibold text-foreground">
               {token}
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">Limit Order</span>
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isLoading ? "Updating..." : `${data.length} trades`}
-            </p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 px-4 py-2 bg-table-header text-xs font-medium text-muted-foreground border-t border-border/30">
+        <div className="grid grid-cols-3 gap-2 px-4 py-2 text-sm font-medium text-subtle-text border-b border-border/50">
           <div className="flex items-center">
-            <span className="ml-1">Time</span>
+            <span>Thời gian</span>
           </div>
-          <div className="text-right">Price (USDT)</div>
-          <div className="text-right">Quantity ({token})</div>
+          <div className="text-right">Giá (USDT)</div>
+          <div className="text-right">Số lượng ({token})</div>
         </div>
       </div>
 
@@ -88,15 +83,15 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
             {rowsWithColors.map((row) => (
               <div
                 key={row.a}
-                className="grid grid-cols-3 gap-2 px-4 py-2 hover:bg-muted/30 transition-colors text-xs font-mono"
+                className="grid grid-cols-3 gap-2 px-4 py-2 hover:bg-muted/30 transition-colors text-sm tabular-nums"
               >
-                <div className="text-muted-foreground">
+                <div className="text-subtle-text font-normal">
                   {formatTime(row.T)}
                 </div>
-                <div className={`text-right font-semibold ${row.priceColor}`}>
+                <div className={`text-right font-medium ${row.priceColor}`}>
                   {formatPrice(row.p)}
                 </div>
-                <div className="text-right text-foreground">
+                <div className="text-right text-foreground font-normal">
                   {formatQuantity(row.q)}
                 </div>
               </div>

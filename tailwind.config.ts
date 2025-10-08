@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -17,8 +19,11 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: "#1A1A1A",
         foreground: "hsl(var(--foreground))",
+        "price-up": "#22C55E",
+        "price-down": "#EF4444",
+        "subtle-text": "#9CA3AF",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -51,8 +56,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        "price-up": "hsl(var(--price-up))",
-        "price-down": "hsl(var(--price-down))",
         "header-bg": "hsl(var(--header-bg))",
         "table-header": "hsl(var(--table-header))",
         sidebar: {
@@ -67,6 +70,7 @@ export default {
         },
       },
       fontFamily: {
+        sans: ["Inter", "sans-serif"],
         mono: ['ui-monospace', 'SFMono-Regular', 'Monaco', 'Consolas', 'monospace'],
       },
       borderRadius: {
@@ -98,5 +102,14 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    tailwindcssAnimate,
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".tabular-nums": {
+          fontFeatureSettings: '"tnum"',
+        },
+      });
+    }),
+  ],
 } satisfies Config;

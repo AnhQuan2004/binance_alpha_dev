@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { OrderColumn } from '@/components/OrderColumn';
-import { StatsRow } from '@/components/StatsRow';
 import { Header } from '@/components/Header';
 import { MobileOrderTabs } from '@/components/MobileOrderTabs';
 import { OrderData } from '@/hooks/useOrderData';
@@ -50,9 +49,6 @@ const Index = () => {
         title="Binance Alpha Limit Orders"
         subtitle="Real-time order book data • Updates every second"
       />
-
-      {/* Stats Row */}
-      <StatsRow tokenData={tokenData} />
 
       {/* Desktop View */}
       <div className="hidden lg:grid grid-cols-3 xl:grid-cols-5 gap-4">
