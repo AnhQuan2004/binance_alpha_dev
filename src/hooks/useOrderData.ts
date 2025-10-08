@@ -14,15 +14,17 @@ interface UseOrderDataResult {
   error: string | null;
 }
 
-export function useOrderData(apiUrl: string, pollInterval = 1000): UseOrderDataResult {
+export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResult {
   const [data, setData] = useState<OrderData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const abortControllerRef = useRef<AbortController | null>(null);
   const retryCountRef = useRef(0);
-  const intervalRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const isVisibleRef = useRef(true);
+  const lastSeenIdRef = useRef<number | null>(null);
+  const initialLoadRef = useRef(true);
 
   const fetchData = useCallback(async () => {
     // Cancel previous request
@@ -48,21 +50,48 @@ export function useOrderData(apiUrl: string, pollInterval = 1000): UseOrderDataR
 
       const result = await response.json();
       const newData = result.data || [];
+      
+      // Sort by trade time descending (newest first)
+      newData.sort((a: OrderData, b: OrderData) => b.T - a.T);
 
-      // Only update if data has changed (compare first trade ID)
       setData((prevData) => {
-        if (prevData.length === 0 || newData.length === 0) {
+        // First load or no previous data
+        if (prevData.length === 0 || initialLoadRef.current) {
+          if (newData.length > 0) {
+            lastSeenIdRef.current = Math.max(...newData.map((item: OrderData) => item.a));
+            initialLoadRef.current = false;
+          }
           return newData;
         }
-        if (prevData[0]?.a !== newData[0]?.a) {
-          return newData;
+        
+        // Merge strategy: add only new trades (with a > lastSeenId)
+        if (newData.length > 0) {
+          const lastId = lastSeenIdRef.current || 0;
+          const newTrades = newData.filter((item: OrderData) => item.a > lastId);
+          
+          if (newTrades.length > 0) {
+            // Update lastSeenId to the highest trade ID
+            lastSeenIdRef.current = Math.max(...newData.map((item: OrderData) => item.a));
+            
+            // Merge and keep sorted by time (T) descending
+            const merged = [...newTrades, ...prevData];
+            merged.sort((a, b) => b.T - a.T);
+            
+            // Limit to 40 items to match API limit
+            return merged.slice(0, 40);
+          }
         }
+        
         return prevData;
       });
 
       setError(null);
       setIsLoading(false);
       retryCountRef.current = 0;
+      
+      // Schedule next fetch with normal interval (1s)
+      scheduleNextFetch(isVisibleRef.current ? 1000 : 5000);
+      
     } catch (err: any) {
       if (err.name === 'AbortError') {
         return;
@@ -76,15 +105,22 @@ export function useOrderData(apiUrl: string, pollInterval = 1000): UseOrderDataR
       retryCountRef.current += 1;
       const backoffDelay = Math.min(1000 * Math.pow(2, retryCountRef.current), 15000);
       
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      
-      intervalRef.current = window.setTimeout(() => {
-        fetchData();
-      }, backoffDelay);
+      scheduleNextFetch(backoffDelay);
     }
   }, [apiUrl]);
+
+  // Schedule next fetch with delay
+  const scheduleNextFetch = useCallback((delay: number) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = window.setTimeout(() => {
+      if (isVisibleRef.current || delay > 1000) { // Always fetch on backoff
+        fetchData();
+      }
+    }, delay);
+  }, [fetchData]);
 
   useEffect(() => {
     // Handle visibility change
@@ -94,19 +130,20 @@ export function useOrderData(apiUrl: string, pollInterval = 1000): UseOrderDataR
       if (isVisibleRef.current) {
         // Tab became visible - fetch immediately
         fetchData();
+      } else {
+        // Tab hidden - reschedule with longer interval if we're not in backoff
+        if (retryCountRef.current === 0) {
+          scheduleNextFetch(5000);
+        }
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Initial fetch
-    fetchData();
-
-    // Set up polling
-    intervalRef.current = window.setInterval(() => {
-      const currentInterval = isVisibleRef.current ? pollInterval : 5000;
+    // Initial fetch with stagger delay
+    const initialTimeout = setTimeout(() => {
       fetchData();
-    }, isVisibleRef.current ? pollInterval : 5000);
+    }, staggerDelay);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -115,11 +152,13 @@ export function useOrderData(apiUrl: string, pollInterval = 1000): UseOrderDataR
         abortControllerRef.current.abort();
       }
       
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
+      
+      clearTimeout(initialTimeout);
     };
-  }, [fetchData, pollInterval]);
+  }, [fetchData, scheduleNextFetch, staggerDelay]);
 
   return { data, isLoading, error };
 }

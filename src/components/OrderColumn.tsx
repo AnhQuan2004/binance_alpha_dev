@@ -1,16 +1,25 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useEffect } from 'react';
 import { useOrderData, OrderData } from '@/hooks/useOrderData';
 import { formatTime, formatPrice, formatQuantity } from '@/lib/formatters';
 import { AlertCircle } from 'lucide-react';
+import { TokenIcon } from './TokenIcon';
 
 interface OrderColumnProps {
   token: string;
   apiUrl: string;
   staggerDelay?: number;
+  onDataUpdate?: (data: OrderData[]) => void;
 }
 
-function OrderColumnComponent({ token, apiUrl, staggerDelay = 0 }: OrderColumnProps) {
-  const { data, isLoading, error } = useOrderData(apiUrl, 1000);
+function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }: OrderColumnProps) {
+  const { data, isLoading, error } = useOrderData(apiUrl, staggerDelay);
+
+  // Pass data back to parent component
+  useEffect(() => {
+    if (data && data.length > 0 && onDataUpdate) {
+      onDataUpdate(data);
+    }
+  }, [data, onDataUpdate]);
 
   // Calculate price color based on previous price
   const rowsWithColors = useMemo(() => {
@@ -37,14 +46,23 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0 }: OrderColumnPr
   return (
     <div className="flex flex-col h-full bg-card rounded-lg border border-border overflow-hidden">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-header-bg border-b border-border">
-        <div className="px-4 py-3">
-          <h2 className="text-sm font-semibold text-foreground">
-            Limit Order – {token}
-          </h2>
+      <div className="sticky top-0 z-10 bg-header-bg border-b border-border shadow-sm">
+        <div className="px-4 py-3 flex items-center space-x-2 bg-card/50">
+          <TokenIcon token={token} size="sm" />
+          <div>
+            <h2 className="text-sm font-semibold text-foreground flex items-center">
+              {token}
+              <span className="ml-1.5 text-xs font-normal text-muted-foreground">Limit Order</span>
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {isLoading ? "Updating..." : `${data.length} trades`}
+            </p>
+          </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 px-4 py-2 bg-table-header text-xs font-medium text-muted-foreground">
-          <div>Time</div>
+        <div className="grid grid-cols-3 gap-2 px-4 py-2 bg-table-header text-xs font-medium text-muted-foreground border-t border-border/30">
+          <div className="flex items-center">
+            <span className="ml-1">Time</span>
+          </div>
           <div className="text-right">Price (USDT)</div>
           <div className="text-right">Quantity ({token})</div>
         </div>

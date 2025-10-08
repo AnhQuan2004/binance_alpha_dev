@@ -1,4 +1,9 @@
+import { useState, useEffect } from 'react';
 import { OrderColumn } from '@/components/OrderColumn';
+import { StatsRow } from '@/components/StatsRow';
+import { Header } from '@/components/Header';
+import { MobileOrderTabs } from '@/components/MobileOrderTabs';
+import { OrderData } from '@/hooks/useOrderData';
 
 const TOKENS = [
   {
@@ -29,27 +34,51 @@ const TOKENS = [
 ];
 
 const Index = () => {
+  const [tokenData, setTokenData] = useState<{[key: string]: OrderData[]}>({});
+
+  // Callback function to receive data from OrderColumn components
+  const handleDataUpdate = (token: string, data: OrderData[]) => {
+    setTokenData(prev => ({
+      ...prev,
+      [token]: data
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-background p-4">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">
-          Binance Alpha Limit Orders
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Real-time order book data • Updates every second
-        </p>
-      </header>
+      <Header 
+        title="Binance Alpha Limit Orders"
+        subtitle="Real-time order book data • Updates every second"
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      {/* Stats Row */}
+      <StatsRow tokenData={tokenData} />
+
+      {/* Desktop View */}
+      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-5 gap-4">
         {TOKENS.map((token) => (
           <OrderColumn
             key={token.name}
             token={token.name}
             apiUrl={token.apiUrl}
             staggerDelay={token.staggerDelay}
+            onDataUpdate={(data) => handleDataUpdate(token.name, data)}
           />
         ))}
       </div>
+
+      {/* Mobile/Tablet View */}
+      <MobileOrderTabs tokens={TOKENS.map(t => t.name)}>
+        {TOKENS.map((token) => (
+          <OrderColumn
+            key={token.name}
+            token={token.name}
+            apiUrl={token.apiUrl}
+            staggerDelay={token.staggerDelay}
+            onDataUpdate={(data) => handleDataUpdate(token.name, data)}
+          />
+        ))}
+      </MobileOrderTabs>
     </div>
   );
 };
