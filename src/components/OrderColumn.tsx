@@ -2,7 +2,6 @@ import { memo, useMemo, useEffect } from 'react';
 import { useOrderData, OrderData } from '@/hooks/useOrderData';
 import { formatTime, formatPrice, formatQuantity } from '@/lib/formatters';
 import { AlertCircle } from 'lucide-react';
-import { TokenIcon } from './TokenIcon';
 
 interface OrderColumnProps {
   token: string;
@@ -12,7 +11,15 @@ interface OrderColumnProps {
 }
 
 function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }: OrderColumnProps) {
-  const { data, isLoading, error } = useOrderData(apiUrl, staggerDelay);
+  const { data, isLoading, error, spreadBps } = useOrderData(apiUrl, staggerDelay);
+
+  const stability = useMemo(() => {
+    if (spreadBps === null) return null;
+    if (spreadBps <= 1) return { level: 'Rất ổn định', color: 'text-green-400' };
+    if (spreadBps <= 5) return { level: 'Ổn định vừa', color: 'text-yellow-400' };
+    if (spreadBps <= 15) return { level: 'Biến động nhẹ', color: 'text-orange-400' };
+    return { level: 'Dao động cao / Illiquid', color: 'text-red-400' };
+  }, [spreadBps]);
 
   // Pass data back to parent component
   useEffect(() => {
@@ -44,27 +51,33 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
   }, [data]);
 
   return (
-    <div className="flex flex-col h-full bg-background rounded-lg overflow-hidden font-sans">
+    <div className="flex flex-col h-[760px] bg-background rounded-lg overflow-hidden font-sans border border-border">
       {/* Header */}
       <div className="sticky top-0 z-10">
-        <div className="px-4 py-3">
-          <div>
+        <div className="px-4 py-3 h-[60px] flex items-center">
+          <div className="flex items-center justify-between w-full">
             <h2 className="text-lg font-semibold text-foreground">
               {token}
             </h2>
+            {stability && (
+              <div className="flex items-center">
+                <span className={`mr-2 ${stability.color}`}>●</span>
+                <span className="text-sm text-subtle-text">{stability.level} ({spreadBps?.toFixed(2)} bps)</span>
+              </div>
+            )}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 px-4 py-2 text-sm font-medium text-subtle-text border-b border-border/50">
+        <div className="grid grid-cols-3 gap-2 px-4 py-2 text-base font-medium text-subtle-text border-b border-border">
           <div className="flex items-center">
             <span>Thời gian</span>
           </div>
           <div className="text-right">Giá (USDT)</div>
-          <div className="text-right">Số lượng ({token})</div>
+          <div className="text-right">Số lượng</div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+      <div className="overflow-y-auto h-[650px]">
         {isLoading && data.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
             Loading...
@@ -79,19 +92,19 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
             No trades available
           </div>
         ) : (
-          <div className="divide-y divide-border/50">
+          <div className="divide-y divide-border">
             {rowsWithColors.map((row) => (
               <div
                 key={row.a}
-                className="grid grid-cols-3 gap-2 px-4 py-2 hover:bg-muted/30 transition-colors text-sm tabular-nums"
+                className="grid grid-cols-3 gap-2 px-4 py-1 hover:bg-muted/30 transition-colors"
               >
-                <div className="text-subtle-text font-normal">
+                <div className="text-subtle-text font-normal tabular-nums text-sm">
                   {formatTime(row.T)}
                 </div>
-                <div className={`text-right font-medium ${row.priceColor}`}>
+                <div className={`text-right font-medium tabular-nums text-base ${row.priceColor}`}>
                   {formatPrice(row.p)}
                 </div>
-                <div className="text-right text-foreground font-normal">
+                <div className="text-right text-foreground font-normal tabular-nums text-base">
                   {formatQuantity(row.q)}
                 </div>
               </div>

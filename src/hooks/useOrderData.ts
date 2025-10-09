@@ -12,10 +12,12 @@ interface UseOrderDataResult {
   data: OrderData[];
   isLoading: boolean;
   error: string | null;
+  spreadBps: number | null;
 }
 
 export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResult {
   const [data, setData] = useState<OrderData[]>([]);
+  const [spreadBps, setSpreadBps] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -53,6 +55,19 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
       // Sort by trade time descending (newest first)
       newData.sort((a: OrderData, b: OrderData) => b.T - a.T);
 
+      // Calculate spreadBps from the last 10 trades
+      if (newData.length > 0) {
+        const last10Trades = newData.slice(0, 10);
+        const prices = last10Trades.map(t => parseFloat(t.p));
+        const maxPrice = Math.max(...prices);
+        const minPrice = Math.min(...prices);
+        const midPrice = (maxPrice + minPrice) / 2;
+        if (midPrice > 0) {
+          const spread = ((maxPrice - minPrice) / midPrice) * 10000;
+          setSpreadBps(spread);
+        }
+      }
+
       setData((prevData) => {
         // First load or no previous data
         if (prevData.length === 0 || initialLoadRef.current) {
@@ -76,7 +91,7 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
             const merged = [...newTrades, ...prevData];
             merged.sort((a, b) => b.T - a.T);
             
-            // Limit to 40 items to match API limit
+            // Increase limit to show more data
             return merged.slice(0, 40);
           }
         }
@@ -138,5 +153,5 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
     };
   }, [fetchData, scheduleNextFetch, staggerDelay]);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, spreadBps };
 }

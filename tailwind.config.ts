@@ -24,6 +24,9 @@ export default {
         "price-up": "#22C55E",
         "price-down": "#EF4444",
         "subtle-text": "#9CA3AF",
+        orange: {
+          400: '#FB923C',
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -70,7 +73,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Monaco', 'Consolas', 'monospace'],
       },
       borderRadius: {
