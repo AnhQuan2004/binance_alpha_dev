@@ -15,7 +15,7 @@ export function formatTime(timestamp: number): string {
  * Format price to 8 decimal places
  */
 export function formatPrice(price: string | number): string {
-  return Number(price).toFixed(6);
+  return Number(price).toFixed(8);
 }
 
 /**
