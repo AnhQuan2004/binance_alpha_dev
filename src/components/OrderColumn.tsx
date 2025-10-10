@@ -67,12 +67,11 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
             )}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 px-4 py-2 text-base font-medium text-subtle-text border-b border-border">
+        <div className="grid grid-cols-2 gap-2 px-4 py-2 text-base font-medium text-subtle-text border-b border-border">
           <div className="flex items-center">
             <span>Thời gian</span>
           </div>
           <div className="text-right">Giá (USDT)</div>
-          <div className="text-right">Số lượng</div>
         </div>
       </div>
 
@@ -96,16 +95,13 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
             {rowsWithColors.map((row) => (
               <div
                 key={row.a}
-                className="grid grid-cols-3 gap-2 px-4 py-1 hover:bg-muted/30 transition-colors"
+                className="grid grid-cols-2 gap-2 px-4 py-1 hover:bg-muted/30 transition-colors"
               >
                 <div className="text-subtle-text font-normal tabular-nums text-sm">
                   {formatTime(row.T)}
                 </div>
                 <div className={`text-right font-medium tabular-nums text-base ${row.priceColor}`}>
                   {formatPrice(row.p)}
-                </div>
-                <div className="text-right text-foreground font-normal tabular-nums text-base">
-                  {formatQuantity(row.q)}
                 </div>
               </div>
             ))}
