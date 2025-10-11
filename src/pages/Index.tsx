@@ -21,8 +21,8 @@ const TOKENS = [
     staggerDelay: 400,
   },
   {
-    name: 'PINGPONG',
-    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_368USDT',
+    name: 'BTG',
+    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_406USDT',
     staggerDelay: 600,
   },
   {
