@@ -10,9 +10,9 @@ interface TokenIconProps {
 
 const colorMap: Record<string, string> = {
   AOP: 'bg-gradient-to-br from-blue-500 to-purple-600',
-  ZEUS: 'bg-gradient-to-br from-yellow-500 to-amber-600',
+  CDL: 'bg-gradient-to-br from-yellow-500 to-amber-600',
   ALEO: 'bg-gradient-to-br from-green-500 to-emerald-600',
-  PINGPONG: 'bg-gradient-to-br from-pink-500 to-rose-600',
+  BTG: 'bg-gradient-to-br from-pink-500 to-rose-600',
   NUMI: 'bg-gradient-to-br from-cyan-500 to-blue-600',
 };
 

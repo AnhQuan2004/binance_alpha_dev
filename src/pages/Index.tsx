@@ -12,8 +12,8 @@ const TOKENS = [
     multiplier: 4,
   },
   {
-    name: 'ZEUS',
-    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_372USDT',
+    name: 'CDL',
+    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_423USDT',
     staggerDelay: 200,
     multiplier: 4,
   },
