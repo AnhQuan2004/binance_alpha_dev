@@ -1,6 +1,13 @@
 import { memo, useMemo, useEffect } from 'react';
 import { useOrderData, OrderData } from '@/hooks/useOrderData';
 import { formatTime, formatPrice, formatQuantity } from '@/lib/formatters';
+import { getPointFromVolume } from '@/lib/volume-ladder';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { AlertCircle } from 'lucide-react';
 
 interface OrderColumnProps {
@@ -8,9 +15,10 @@ interface OrderColumnProps {
   apiUrl: string;
   staggerDelay?: number;
   onDataUpdate?: (data: OrderData[]) => void;
+  multiplier?: number;
 }
 
-function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }: OrderColumnProps) {
+function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, multiplier }: OrderColumnProps) {
   const { data, isLoading, error, spreadBps } = useOrderData(apiUrl, staggerDelay);
 
   const stability = useMemo(() => {
@@ -56,9 +64,27 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
       <div className="sticky top-0 z-10">
         <div className="px-4 py-3 h-[60px] flex items-center">
           <div className="flex items-center justify-between w-full">
-            <h2 className="text-lg font-semibold text-foreground">
-              {token}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-foreground">
+                {token}
+              </h2>
+              {multiplier && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="text-yellow-400 font-bold text-sm">
+                        (x{multiplier})
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        Volume for this token is multiplied by {multiplier}.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
             {stability && (
               <div className="flex items-center">
                 <span className={`mr-2 ${stability.color}`}>●</span>
@@ -92,19 +118,37 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate }:
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {rowsWithColors.map((row) => (
-              <div
-                key={row.a}
-                className="grid grid-cols-2 gap-2 px-4 py-1 hover:bg-muted/30 transition-colors"
-              >
-                <div className="text-subtle-text font-normal tabular-nums text-sm">
-                  {formatTime(row.T)}
-                </div>
-                <div className={`text-right font-medium tabular-nums text-base ${row.priceColor}`}>
-                  {formatPrice(row.p)}
-                </div>
-              </div>
-            ))}
+            <TooltipProvider>
+              {rowsWithColors.map((row) => {
+                const volume = parseFloat(row.p) * parseFloat(row.q);
+                const point = getPointFromVolume(volume);
+                const tooltipContent = point
+                  ? `≈ Volume $${volume.toFixed(
+                      2
+                    )} @ Point ${point}`
+                  : `Volume $${volume.toFixed(2)}`;
+
+                return (
+                  <Tooltip key={row.a}>
+                    <TooltipTrigger asChild>
+                      <div className="grid grid-cols-2 gap-2 px-4 py-1 hover:bg-muted/30 transition-colors">
+                        <div className="text-subtle-text font-normal tabular-nums text-sm">
+                          {formatTime(row.T)}
+                        </div>
+                        <div
+                          className={`text-right font-medium tabular-nums text-base ${row.priceColor}`}
+                        >
+                          {formatPrice(row.p)}
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{tooltipContent}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
           </div>
         )}
       </div>

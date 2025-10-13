@@ -1,3 +1,5 @@
+import { VolumeLadder } from './VolumeLadder';
+
 interface HeaderProps {
   title: string;
   subtitle?: string;
@@ -12,6 +14,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           <p className="text-xs md:text-sm text-muted-foreground">{subtitle}</p>
         )}
       </div>
+      <VolumeLadder />
     </header>
   );
 }

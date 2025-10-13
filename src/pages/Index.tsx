@@ -9,26 +9,31 @@ const TOKENS = [
     name: 'AOP',
     apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_382USDT',
     staggerDelay: 0,
+    multiplier: 4,
   },
   {
     name: 'ZEUS',
     apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_372USDT',
     staggerDelay: 200,
+    multiplier: 4,
   },
   {
     name: 'ALEO',
     apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_373USDT',
     staggerDelay: 400,
+    multiplier: 4,
   },
   {
     name: 'BTG',
     apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_406USDT',
     staggerDelay: 600,
+    multiplier: 4,
   },
   {
     name: 'NUMI',
     apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_387USDT',
     staggerDelay: 800,
+    multiplier: 4,
   },
 ];
 
@@ -57,6 +62,7 @@ const Index = () => {
             key={token.name}
             token={token.name}
             apiUrl={token.apiUrl}
+            multiplier={token.multiplier}
             staggerDelay={token.staggerDelay}
             onDataUpdate={(data) => handleDataUpdate(token.name, data)}
           />
@@ -70,6 +76,7 @@ const Index = () => {
             key={token.name}
             token={token.name}
             apiUrl={token.apiUrl}
+            multiplier={token.multiplier}
             staggerDelay={token.staggerDelay}
             onDataUpdate={(data) => handleDataUpdate(token.name, data)}
           />
