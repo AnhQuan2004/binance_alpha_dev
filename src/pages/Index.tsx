@@ -87,7 +87,7 @@ const Index = () => {
       
       {/* Articles section */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Bài viết mới nhất</h2>
+        <h2 className="text-xl font-bold mb-4">Alpha Insights</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <a 
             href="https://gfiresearch.net/zama-fhe-la-gi" 
