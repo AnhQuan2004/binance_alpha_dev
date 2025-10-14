@@ -18,8 +18,8 @@ const TOKENS = [
     multiplier: 4,
   },
   {
-    name: 'ALEO',
-    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_373USDT',
+    name: 'CDL',
+    apiUrl: 'https://www.binance.com/bapi/defi/v1/public/alpha-trade/agg-trades?limit=40&symbol=ALPHA_423USDT',
     staggerDelay: 400,
     multiplier: 4,
   },
