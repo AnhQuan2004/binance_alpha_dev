@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { api } from '@/lib/api';
 
 export interface OrderData {
   a: number; // Aggregate trade ID
@@ -15,7 +16,7 @@ interface UseOrderDataResult {
   spreadBps: number | null;
 }
 
-export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResult {
+export function useOrderData(tokenName: string, apiUrl: string, staggerDelay = 0): UseOrderDataResult {
   const [data, setData] = useState<OrderData[]>([]);
   const [spreadBps, setSpreadBps] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,6 +85,12 @@ export function useOrderData(apiUrl: string, staggerDelay = 0): UseOrderDataResu
           const newTrades = newData.filter((item: OrderData) => item.a > lastId);
           
           if (newTrades.length > 0) {
+            newTrades.forEach(trade => {
+              const time = new Date(trade.T).toISOString();
+              const price = parseFloat(trade.p);
+              api.saveCoinData(tokenName, time, price).catch(console.error);
+            });
+
             // Update lastSeenId to the highest trade ID
             lastSeenIdRef.current = Math.max(...newData.map((item: OrderData) => item.a));
             

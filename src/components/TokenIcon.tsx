@@ -8,14 +8,6 @@ interface TokenIconProps {
   className?: string;
 }
 
-const colorMap: Record<string, string> = {
-  AOP: 'bg-gradient-to-br from-blue-500 to-purple-600',
-  FROGGIE: 'bg-gradient-to-br from-yellow-500 to-amber-600',
-  CDL: 'bg-gradient-to-br from-green-500 to-emerald-600',
-  BTG: 'bg-gradient-to-br from-pink-500 to-rose-600',
-  NUMI: 'bg-gradient-to-br from-cyan-500 to-blue-600',
-};
-
 const sizeMap = {
   sm: 'w-6 h-6 text-xs',
   md: 'w-8 h-8 text-sm',
@@ -23,7 +15,7 @@ const sizeMap = {
 };
 
 function TokenIconComponent({ token, size = 'md', className }: TokenIconProps) {
-  const tokenColor = colorMap[token] || 'bg-gradient-to-br from-gray-500 to-gray-600';
+  const tokenColor = 'bg-gradient-to-br from-gray-500 to-gray-600';
   const sizeClass = sizeMap[size];
   
   // Get the first letter of the token name

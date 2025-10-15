@@ -12,18 +12,29 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-type Inputs = Omit<Airdrop, 'id' | 'deleted'>;
+type AirdropInputs = Omit<Airdrop, 'id' | 'deleted'>;
+type TokenInputs = {
+  name: string;
+  apiUrl: string;
+  staggerDelay: number;
+  multiplier: number;
+};
 
 const Admin = () => {
   // We're not forcing theme changes anymore, let the user control it
   const { theme } = useTheme();
 
-  const { register, handleSubmit, reset, setValue, watch } = useForm<Inputs>({
-    defaultValues: initialValues,
+  const { register, handleSubmit, reset, setValue, watch } = useForm<AirdropInputs>({
+    defaultValues: initialAirdropValues,
+  });
+  const { register: registerToken, handleSubmit: handleSubmitToken, reset: resetToken, setValue: setTokenValue } = useForm<TokenInputs>({
+    defaultValues: initialTokenValues,
   });
   const [allAirdrops, setAllAirdrops] = useState<Airdrop[]>([]);
   const [deletedAirdrops, setDeletedAirdrops] = useState<Airdrop[]>([]);
   const [editingAirdrop, setEditingAirdrop] = useState<Airdrop | null>(null);
+  const [allTokens, setAllTokens] = useState<any[]>([]);
+  const [editingToken, setEditingToken] = useState<any | null>(null);
 
   const fetchAirdrops = async () => {
     try {
@@ -38,11 +49,21 @@ const Admin = () => {
     }
   };
 
+  const fetchTokens = async () => {
+    try {
+      const tokens = await api.getTokens();
+      setAllTokens(tokens);
+    } catch (error) {
+      toast.error('Failed to fetch tokens');
+    }
+  };
+
   useEffect(() => {
     fetchAirdrops();
+    fetchTokens();
   }, []);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onAirdropSubmit: SubmitHandler<AirdropInputs> = async (data) => {
     try {
       if (editingAirdrop) {
         await api.updateAirdrop(editingAirdrop.id!, data);
@@ -59,7 +80,24 @@ const Admin = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const onTokenSubmit: SubmitHandler<TokenInputs> = async (data) => {
+    try {
+      if (editingToken) {
+        await api.updateToken(editingToken.id!, data);
+        toast.success('Token updated successfully');
+      } else {
+        await api.createToken(data);
+        toast.success('Token created successfully');
+      }
+      resetToken();
+      setEditingToken(null);
+      fetchTokens();
+    } catch (error) {
+      toast.error('Failed to save token');
+    }
+  };
+
+  const handleAirdropDelete = async (id: string) => {
     try {
       await api.deleteAirdrop(id);
       toast.success('Airdrop deleted successfully');
@@ -69,9 +107,24 @@ const Admin = () => {
     }
   };
 
-  const handleEdit = (airdrop: Airdrop) => {
+  const handleTokenDelete = async (id: string) => {
+    try {
+      await api.deleteToken(id);
+      toast.success('Token deleted successfully');
+      fetchTokens();
+    } catch (error) {
+      toast.error('Failed to delete token');
+    }
+  };
+
+  const handleAirdropEdit = (airdrop: Airdrop) => {
     setEditingAirdrop(airdrop);
     reset(airdrop);
+  };
+
+  const handleTokenEdit = (token: any) => {
+    setEditingToken(token);
+    resetToken(token);
   };
 
   return (
@@ -79,9 +132,9 @@ const Admin = () => {
       <h1 className="text-2xl font-bold mb-6 border-b pb-2">Admin Panel</h1>
       <div className="bg-card rounded-lg border p-4 md:p-6 mb-8 shadow-sm">
         <h2 className="text-xl font-semibold mb-4">{editingAirdrop ? 'Edit' : 'Create'} Airdrop</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onAirdropSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.keys(initialValues).filter(key => key !== 'timezone').map((key) => (
+            {Object.keys(initialAirdropValues).filter(key => key !== 'timezone').map((key) => (
               <div key={key} className="space-y-2">
                 <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
                 {key === 'time_iso' ? (
@@ -90,12 +143,12 @@ const Admin = () => {
                     onChange={(date) => setValue('time_iso', date)}
                   />
                 ) : key === 'source_link' ? (
-                  <Input id={key} {...register(key as keyof Inputs)} placeholder="https://..." />
+                  <Input id={key} {...register(key as keyof AirdropInputs)} placeholder="https://..." />
                 ) : (
                   <Input 
                     id={key} 
-                    {...register(key as keyof Inputs)} 
-                    type={['points', 'amount', 'raised'].includes(key) ? 'number' : 'text'} 
+                    {...register(key as keyof AirdropInputs)} 
+                    type={['points', 'amount'].includes(key) ? 'number' : 'text'} 
                     placeholder={key === 'project' ? 'Project name' : ''} 
                   />
                 )}
@@ -109,7 +162,7 @@ const Admin = () => {
             {editingAirdrop && (
               <Button 
                 variant="outline" 
-                onClick={() => { setEditingAirdrop(null); reset(initialValues); }}
+                onClick={() => { setEditingAirdrop(null); reset(initialAirdropValues); }}
                 className="min-w-[120px]"
               >
                 Cancel Edit
@@ -119,8 +172,42 @@ const Admin = () => {
         </form>
       </div>
 
-      <AirdropTable title="All Airdrops" airdrops={allAirdrops} onEdit={handleEdit} onDelete={handleDelete} />
+      <div className="bg-card rounded-lg border p-4 md:p-6 mb-8 shadow-sm">
+        <h2 className="text-xl font-semibold mb-4">{editingToken ? 'Edit' : 'Create'} Token</h2>
+        <form onSubmit={handleSubmitToken(onTokenSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Object.keys(initialTokenValues).map((key) => (
+              <div key={key} className="space-y-2">
+                <Label htmlFor={key} className="capitalize">{key.replace(/_/g, ' ')}</Label>
+                <Input 
+                  id={key} 
+                  {...registerToken(key as keyof TokenInputs)} 
+                  type={['staggerDelay', 'multiplier'].includes(key) ? 'number' : 'text'} 
+                  placeholder={key.replace(/_/g, ' ')} 
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" className="min-w-[120px]">
+              {editingToken ? 'Update' : 'Create'} Token
+            </Button>
+            {editingToken && (
+              <Button 
+                variant="outline" 
+                onClick={() => { setEditingToken(null); resetToken(initialTokenValues); }}
+                className="min-w-[120px]"
+              >
+                Cancel Edit
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <AirdropTable title="All Airdrops" airdrops={allAirdrops} onEdit={handleAirdropEdit} onDelete={handleAirdropDelete} />
       <AirdropTable title="Deleted Airdrops" airdrops={deletedAirdrops} />
+      <TokenTable title="All Tokens" tokens={allTokens} onEdit={handleTokenEdit} onDelete={handleTokenDelete} />
     </div>
   );
 };
@@ -201,6 +288,65 @@ const AirdropTable = ({ airdrops, title, onEdit, onDelete }: { airdrops: Airdrop
   </div>
 );
 
+const TokenTable = ({ tokens, title, onEdit, onDelete }: { tokens: any[], title: string, onEdit?: (token: any) => void, onDelete?: (id: string) => void }) => (
+  <div className="mb-8 bg-card rounded-lg border shadow-sm overflow-hidden">
+    <div className="p-4 border-b">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-sm text-muted-foreground mt-1">{tokens.length} tokens found</p>
+    </div>
+    
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-muted/50 border-b">
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Name</th>
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">API URL</th>
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Stagger Delay</th>
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Multiplier</th>
+            {(onEdit || onDelete) && (
+              <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Actions</th>
+            )}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {tokens.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
+                No tokens found
+              </td>
+            </tr>
+          ) : (
+            tokens.map((token) => (
+              <tr key={token.id} className="hover:bg-muted/50 transition-colors">
+                <td className="px-4 py-3 whitespace-nowrap font-medium">{token.name}</td>
+                <td className="px-4 py-3 max-w-[200px] truncate">{token.apiUrl}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{token.staggerDelay}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{token.multiplier}</td>
+                {(onEdit || onDelete) && (
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex space-x-2">
+                      {onEdit && (
+                        <Button size="sm" variant="outline" onClick={() => onEdit(token)}>
+                          Edit
+                        </Button>
+                      )}
+                      {onDelete && (
+                        <Button size="sm" variant="destructive" onClick={() => onDelete(token.id!)}>
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
 const DateTimePicker = ({ value, onChange }: { value: string, onChange: (date: string) => void }) => {
   const [date, setDate] = useState<Date | undefined>(value ? new Date(value) : undefined);
 
@@ -254,7 +400,7 @@ const DateTimePicker = ({ value, onChange }: { value: string, onChange: (date: s
   );
 };
 
-const initialValues: Inputs = {
+const initialAirdropValues: AirdropInputs = {
   project: '',
   alias: '',
   points: 0,
@@ -263,8 +409,15 @@ const initialValues: Inputs = {
   timezone: 'Asia/Ho_Chi_Minh',
   phase: '',
   x: '',
-  raised: 0,
+  raised: '',
   source_link: '',
+};
+
+const initialTokenValues: TokenInputs = {
+  name: '',
+  apiUrl: '',
+  staggerDelay: 0,
+  multiplier: 0,
 };
 
 export default Admin;

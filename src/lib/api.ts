@@ -10,7 +10,7 @@ export interface Airdrop {
   timezone: string;
   phase: string;
   x: string;
-  raised: number;
+  raised: string;
   source_link: string;
   deleted?: boolean;
 }
@@ -60,5 +60,48 @@ export const api = {
     const response = await fetch(`${API_BASE_URL}/admin/airdrops/deleted`);
     if (!response.ok) throw new Error('Failed to fetch deleted airdrops');
     return response.json();
+  },
+
+  saveCoinData: async (coinId: string, time: string, price: number): Promise<any> => {
+    const response = await fetch(`https://gfiresearch.dev/api/coins`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coin_id: coinId, time, price }),
+    });
+    if (!response.ok) throw new Error('Failed to save coin data');
+    return response.json();
+  },
+
+  getTokens: async (): Promise<any[]> => {
+    const response = await fetch(`https://gfiresearch.dev/api/tokens`);
+    if (!response.ok) throw new Error('Failed to fetch tokens');
+    return response.json();
+  },
+
+  createToken: async (token: any): Promise<any> => {
+    const response = await fetch(`https://gfiresearch.dev/api/tokens`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(token),
+    });
+    if (!response.ok) throw new Error('Failed to create token');
+    return response.json();
+  },
+
+  updateToken: async (id: string, updates: any): Promise<any> => {
+    const response = await fetch(`https://gfiresearch.dev/api/tokens/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update token');
+    return response.json();
+  },
+
+  deleteToken: async (id: string): Promise<void> => {
+    const response = await fetch(`https://gfiresearch.dev/api/tokens/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete token');
   },
 };

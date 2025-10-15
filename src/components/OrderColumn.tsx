@@ -19,7 +19,7 @@ interface OrderColumnProps {
 }
 
 function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, multiplier }: OrderColumnProps) {
-  const { data, isLoading, error, spreadBps } = useOrderData(apiUrl, staggerDelay);
+  const { data, isLoading, error, spreadBps } = useOrderData(token, apiUrl, staggerDelay);
 
   const stability = useMemo(() => {
     if (spreadBps === null) return null;

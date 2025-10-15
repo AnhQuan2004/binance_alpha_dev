@@ -71,7 +71,7 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                     </span>
                   </td>
                   <td className="px-4 py-4 text-center">{airdrop.x}</td>
-                  <td className="px-4 py-4 text-center font-medium">${formatNumber(airdrop.raised)}</td>
+                  <td className="px-4 py-4 text-center font-medium">{airdrop.raised}</td>
                   <td className="px-4 py-4 max-w-[200px]">
                     <a 
                       href={airdrop.source_link} 
