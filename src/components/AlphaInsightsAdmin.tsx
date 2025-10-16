@@ -42,12 +42,16 @@ export const AlphaInsightsAdmin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      category: formData.category || 'Dự án', // Ensure category is included
+    };
     try {
       if (isEditing) {
-        await api.updateAlphaInsight(formData.id, formData);
+        await api.updateAlphaInsight(payload.id, payload);
         toast.success('Insight updated');
       } else {
-        await api.createAlphaInsight(formData);
+        await api.createAlphaInsight(payload);
         toast.success('Insight created');
       }
       setFormData({});
