@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -33,6 +34,10 @@ export const AlphaInsightsAdmin = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData({ ...formData, category: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,9 +80,17 @@ export const AlphaInsightsAdmin = () => {
       <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded-lg">
         <div className="grid grid-cols-2 gap-4">
           <Input name="title" placeholder="Title" value={formData.title || ''} onChange={handleInputChange} required />
-          <Input name="category" placeholder="Category" value={formData.category || ''} onChange={handleInputChange} />
+          <Select onValueChange={handleCategoryChange} value={formData.category || ''}>
+            <SelectTrigger>
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Dự án">Dự án</SelectItem>
+              <SelectItem value="Tips">Tips</SelectItem>
+            </SelectContent>
+          </Select>
           <Input name="token" placeholder="Token" value={formData.token || ''} onChange={handleInputChange} />
-          <Input name="platform" placeholder="Platform" value={formData.platform || ''} onChange={handleInputChange} />
+          <Input name="sector" placeholder="Sector" value={formData.sector || ''} onChange={handleInputChange} />
           <Input name="raised" placeholder="Raised" value={formData.raised || ''} onChange={handleInputChange} />
           <Input name="date" type="date" value={formData.date || ''} onChange={handleInputChange} />
           <Input name="imageUrl" placeholder="Image URL" value={formData.imageUrl || ''} onChange={handleInputChange} />
@@ -94,6 +107,7 @@ export const AlphaInsightsAdmin = () => {
             <TableHead>Title</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Token</TableHead>
+            <TableHead>Sector</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -103,6 +117,7 @@ export const AlphaInsightsAdmin = () => {
               <TableCell>{insight.title}</TableCell>
               <TableCell>{insight.category}</TableCell>
               <TableCell>{insight.token}</TableCell>
+              <TableCell>{insight.sector}</TableCell>
               <TableCell>
                 <Button variant="ghost" onClick={() => handleEdit(insight)}>Edit</Button>
                 <Button variant="destructive" onClick={() => handleDelete(insight.id)}>Delete</Button>

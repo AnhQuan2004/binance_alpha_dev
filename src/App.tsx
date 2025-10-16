@@ -8,7 +8,6 @@ import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
 import Airdrops from "./pages/Airdrops";
 import Admin from "./pages/Admin";
-import Tips from "./pages/Tips";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
@@ -28,7 +27,6 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/airdrops" element={<Airdrops />} />
-              <Route path="/tips" element={<Tips />} />
               <Route path="/login" element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/admin" element={<Admin />} />

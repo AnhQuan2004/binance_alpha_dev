@@ -41,7 +41,6 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                 <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Amount</th>
                 <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Time</th>
                 <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Phase</th>
-                <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">X</th>
                 <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Raised</th>
                 <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Source</th>
               </tr>
@@ -50,8 +49,13 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
               {airdrops.map((airdrop) => (
                 <tr key={airdrop.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-4">
-                    <div className="font-medium">{airdrop.project}</div>
-                    {airdrop.alias && <div className="text-sm text-muted-foreground">{airdrop.alias}</div>}
+                    <a href={airdrop.x} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                      <img src="/x.png" alt="X Logo" className="w-4 h-4" />
+                      <div>
+                        <div className="font-medium">{airdrop.project}</div>
+                        {airdrop.alias && <div className="text-sm text-muted-foreground">{airdrop.alias}</div>}
+                      </div>
+                    </a>
                   </td>
                   <td className="px-4 py-4 text-center font-medium">{formatNumber(airdrop.points)}</td>
                   <td className="px-4 py-4 text-center font-medium">${formatNumber(airdrop.amount)}</td>
@@ -70,7 +74,6 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                       {airdrop.phase}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-center">{airdrop.x}</td>
                   <td className="px-4 py-4 text-center font-medium">{airdrop.raised}</td>
                   <td className="px-4 py-4 max-w-[200px]">
                     <a 
