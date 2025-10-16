@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { TokenIcon } from "./TokenIcon";
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 export const AlphaInsightsTable = () => {
   const [insights, setInsights] = useState<any[]>([]);
@@ -53,7 +54,12 @@ export const AlphaInsightsTable = () => {
                   </a>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={insight.category === 'Dự án' ? 'default' : 'secondary'}>
+                  <Badge
+                    className={cn({
+                      'bg-green-500/20 text-green-500': insight.category === 'Dự án',
+                      'bg-yellow-500/20 text-yellow-500': insight.category === 'Tips',
+                    })}
+                  >
                     {insight.category}
                   </Badge>
                 </TableCell>
