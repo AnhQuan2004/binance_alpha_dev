@@ -104,4 +104,37 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to delete token');
   },
+
+  createAlphaInsight: async (insight: any): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/alpha-insights`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(insight),
+    });
+    if (!response.ok) throw new Error('Failed to create alpha insight');
+    return response.json();
+  },
+
+  getAllAlphaInsights: async (): Promise<any[]> => {
+    const response = await fetch(`${API_BASE_URL}/alpha-insights`);
+    if (!response.ok) throw new Error('Failed to fetch alpha insights');
+    return response.json();
+  },
+
+  updateAlphaInsight: async (id: string, updates: any): Promise<any> => {
+    const response = await fetch(`${API_BASE_URL}/alpha-insights/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update alpha insight');
+    return response.json();
+  },
+
+  deleteAlphaInsight: async (id: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/alpha-insights/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete alpha insight');
+  },
 };

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/popover"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AlphaInsightsTable } from "@/components/AlphaInsightsTable";
 
 const Index = () => {
   const [tokenData, setTokenData] = useState<{[key: string]: OrderData[]}>({});
@@ -136,50 +137,8 @@ const Index = () => {
       
 
       
-      {/* Articles section */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Alpha Insights</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <a 
-            href="https://gfiresearch.net/zama-fhe-la-gi" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-background rounded-lg p-4 border border-border shadow-sm hover:shadow-md transition-shadow"
-          >
-            <h3 className="text-lg font-semibold mb-2 text-foreground">ZAMA là gì? Giao thức FHE giúp bảo mật thông tin trên blockchain</h3>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span className="mr-2">🔗</span>
-              <span className="truncate">gfiresearch.net/zama-fhe-la-gi</span>
-            </div>
-          </a>
-          
-          <a 
-            href="https://gfiresearch.net/toi-uu-co-hoi-hyperliquid" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-background rounded-lg p-4 border border-border shadow-sm hover:shadow-md transition-shadow"
-          >
-            <h3 className="text-lg font-semibold mb-2 text-foreground">Tối ưu hóa cơ hội đầu tư trên hệ sinh thái Hyperliquid</h3>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span className="mr-2">🔗</span>
-              <span className="truncate">gfiresearch.net/toi-uu-co-hoi-hyperliquid</span>
-            </div>
-          </a>
-          
-          <a 
-            href="https://gfiresearch.net/hieu-ro-ve-proof-of-liquidity-o-berachain" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-background rounded-lg p-4 border border-border shadow-sm hover:shadow-md transition-shadow"
-          >
-            <h3 className="text-lg font-semibold mb-2 text-foreground">Hiểu rõ cách hoạt động của Proof of Liquidity</h3>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span className="mr-2">🔗</span>
-              <span className="truncate">gfiresearch.net/hieu-ro-ve-proof-of-liquidity-o-berachain</span>
-            </div>
-          </a>
-        </div>
-      </div>
+      {/* Alpha Insights Table */}
+      <AlphaInsightsTable />
     </div>
   );
 };

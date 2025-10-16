@@ -4,6 +4,7 @@ import { Coins } from 'lucide-react';
 
 interface TokenIconProps {
   token: string;
+  imageUrl?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -14,10 +15,20 @@ const sizeMap = {
   lg: 'w-10 h-10 text-base',
 };
 
-function TokenIconComponent({ token, size = 'md', className }: TokenIconProps) {
+function TokenIconComponent({ token, imageUrl, size = 'md', className }: TokenIconProps) {
   const tokenColor = 'bg-gradient-to-br from-gray-500 to-gray-600';
   const sizeClass = sizeMap[size];
   
+  if (imageUrl) {
+    return (
+      <img 
+        src={imageUrl} 
+        alt={token} 
+        className={cn('rounded-full object-cover', sizeClass, className)} 
+      />
+    );
+  }
+
   // Get the first letter of the token name
   const letter = token.charAt(0);
   

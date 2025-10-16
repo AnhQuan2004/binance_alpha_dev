@@ -11,6 +11,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { AlphaInsightsAdmin } from '@/components/AlphaInsightsAdmin';
 
 type AirdropInputs = Omit<Airdrop, 'id' | 'deleted'>;
 type TokenInputs = {
@@ -208,6 +209,7 @@ const Admin = () => {
       <AirdropTable title="All Airdrops" airdrops={allAirdrops} onEdit={handleAirdropEdit} onDelete={handleAirdropDelete} />
       <AirdropTable title="Deleted Airdrops" airdrops={deletedAirdrops} />
       <TokenTable title="All Tokens" tokens={allTokens} onEdit={handleTokenEdit} onDelete={handleTokenDelete} />
+      <AlphaInsightsAdmin />
     </div>
   );
 };
