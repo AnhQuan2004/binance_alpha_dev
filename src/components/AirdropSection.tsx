@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api, Airdrop } from '@/lib/api';
-import { History, Loader2, ExternalLink } from 'lucide-react';
+import { Gift, Calendar, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -96,16 +96,21 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
   </div>
 );
 
-const Airdrops = () => {
-  const [allAirdrops, setAllAirdrops] = useState<Airdrop[]>([]);
+export const AirdropSection = () => {
+  const [todaysAirdrops, setTodaysAirdrops] = useState<Airdrop[]>([]);
+  const [upcomingAirdrops, setUpcomingAirdrops] = useState<Airdrop[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchAirdrops = async () => {
       setIsLoading(true);
       try {
-        const all = await api.getAirdropsByRange('all');
-        setAllAirdrops(all);
+        const [today, upcoming] = await Promise.all([
+          api.getAirdropsByRange('today'),
+          api.getAirdropsByRange('upcoming'),
+        ]);
+        setTodaysAirdrops(today);
+        setUpcomingAirdrops(upcoming);
       } catch (error) {
         toast.error('Failed to fetch airdrops');
       } finally {
@@ -118,11 +123,6 @@ const Airdrops = () => {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Airdrop History</h1>
-        <p className="text-muted-foreground">Track past token airdrops</p>
-      </div>
-      
       {isLoading ? (
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -130,11 +130,10 @@ const Airdrops = () => {
         </div>
       ) : (
         <>
-          <AirdropTable title="Airdrop History" icon={<History className="h-5 w-5 text-primary" />} airdrops={allAirdrops} />
+          <AirdropTable title="Today's Airdrops" icon={<Gift className="h-5 w-5 text-primary" />} airdrops={todaysAirdrops} />
+          <AirdropTable title="Upcoming Airdrops" icon={<Calendar className="h-5 w-5 text-primary" />} airdrops={upcomingAirdrops} />
         </>
       )}
     </div>
   );
 };
-
-export default Airdrops;

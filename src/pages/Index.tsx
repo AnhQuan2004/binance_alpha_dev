@@ -19,9 +19,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { AlphaInsightsTable } from "@/components/AlphaInsightsTable";
+import { AirdropSection } from "@/components/AirdropSection";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [tokenData, setTokenData] = useState<{[key: string]: OrderData[]}>({});
@@ -33,7 +40,7 @@ const Index = () => {
       try {
         const fetchedTokens = await api.getTokens();
         setTokens(fetchedTokens);
-        setSelectedTokens(fetchedTokens.map((t: any) => t.name));
+        setSelectedTokens(fetchedTokens.slice(0, 5).map((t: any) => t.name));
       } catch (error) {
         toast.error('Failed to fetch tokens');
       }
@@ -58,6 +65,9 @@ const Index = () => {
         title="Binance Alpha Limit Orders"
         subtitle="Real-time order book data • Updates every second"
       />
+
+      {/* Airdrop Section */}
+      <AirdropSection />
 
       <div className="my-4">
         <Popover>
@@ -105,6 +115,28 @@ const Index = () => {
             </Command>
           </PopoverContent>
         </Popover>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="ml-2">
+                <Info className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs">
+                <strong>How to use the Order Book:</strong>
+                <br />
+                - Each column represents a token's order book.
+                <br />
+                - Green prices indicate a price increase.
+                <br />
+                - Red prices indicate a price decrease.
+                <br />
+                - Hover over a trade to see the volume.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Desktop View */}

@@ -72,12 +72,17 @@ export const AlphaInsightsAdmin = () => {
     <div className="mt-8">
       <h2 className="text-xl font-bold mb-4">Manage Alpha Insights</h2>
 
+      <div className="flex space-x-2 mb-4">
+        <Button onClick={() => setFormData({ ...formData, category: 'Dự án' })}>Dự án</Button>
+        <Button onClick={() => setFormData({ ...formData, category: 'Tips' })}>Tips</Button>
+      </div>
+
       <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded-lg">
         <div className="grid grid-cols-2 gap-4">
           <Input name="title" placeholder="Title" value={formData.title || ''} onChange={handleInputChange} required />
           <Input name="category" placeholder="Category" value={formData.category || ''} onChange={handleInputChange} />
           <Input name="token" placeholder="Token" value={formData.token || ''} onChange={handleInputChange} />
-          <Input name="platform" placeholder="Platform" value={formData.platform || ''} onChange={handleInputChange} />
+          <Input name="sector" placeholder="Sector" value={formData.sector || ''} onChange={handleInputChange} />
           <Input name="raised" placeholder="Raised" value={formData.raised || ''} onChange={handleInputChange} />
           <Input name="date" type="date" value={formData.date || ''} onChange={handleInputChange} />
           <Input name="imageUrl" placeholder="Image URL" value={formData.imageUrl || ''} onChange={handleInputChange} />

@@ -53,7 +53,15 @@ export const AlphaInsightsTable = () => {
                   </a>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={insight.category === 'Dự án' ? 'default' : 'secondary'}>
+                  <Badge
+                    variant={
+                      insight.category === 'Dự án'
+                        ? 'default'
+                        : insight.category === 'Tips'
+                        ? 'warning'
+                        : 'secondary'
+                    }
+                  >
                     {insight.category}
                   </Badge>
                 </TableCell>

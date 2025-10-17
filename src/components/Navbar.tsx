@@ -27,7 +27,9 @@ const Navbar = () => {
           </NavLink>
       </div>
         <div className="flex items-center">
-          <img src="/logo.png" alt="Logo" className="h-20" />
+          <a href="https://gfiresearch.net/" target="_blank" rel="noopener noreferrer">
+            <img src="/logo.png" alt="Logo" className="h-20" />
+          </a>
         </div>
       </div>
     </nav>
