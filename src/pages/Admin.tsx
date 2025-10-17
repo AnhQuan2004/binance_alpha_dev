@@ -67,17 +67,19 @@ const Admin = () => {
   const onAirdropSubmit: SubmitHandler<AirdropInputs> = async (data) => {
     try {
       if (editingAirdrop) {
-        await api.updateAirdrop(editingAirdrop.id!, data);
+        const updatedAirdrop = await api.updateAirdrop(editingAirdrop.id!, data);
+        setAllAirdrops(allAirdrops.map(a => a.id === editingAirdrop.id ? updatedAirdrop : a));
         toast.success('Airdrop updated successfully');
       } else {
-        await api.createAirdrop(data);
+        const newAirdrop = await api.createAirdrop(data);
+        setAllAirdrops([...allAirdrops, newAirdrop]);
         toast.success('Airdrop created successfully');
       }
-      reset();
+      reset(initialAirdropValues);
       setEditingAirdrop(null);
-      fetchAirdrops();
     } catch (error) {
       toast.error('Failed to save airdrop');
+      fetchAirdrops(); // Fallback to refetching on error
     }
   };
 
@@ -143,7 +145,7 @@ const Admin = () => {
                     value={watch('time_iso')}
                     onChange={(date) => setValue('time_iso', date)}
                   />
-                ) : key === 'source_link' ? (
+                ) : ['source_link', 'image_url'].includes(key) ? (
                   <Input id={key} {...register(key as keyof AirdropInputs)} placeholder="https://..." />
                 ) : (
                   <Input 
@@ -233,6 +235,7 @@ const AirdropTable = ({ airdrops, title, onEdit, onDelete }: { airdrops: Airdrop
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">X</th>
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Raised</th>
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Source</th>
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Image</th>
             {(onEdit || onDelete) && (
               <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Actions</th>
             )}
@@ -241,7 +244,7 @@ const AirdropTable = ({ airdrops, title, onEdit, onDelete }: { airdrops: Airdrop
         <tbody className="divide-y divide-border">
           {airdrops.length === 0 ? (
             <tr>
-              <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+              <td colSpan={10} className="px-4 py-6 text-center text-muted-foreground">
                 No airdrops found
               </td>
             </tr>
@@ -263,6 +266,16 @@ const AirdropTable = ({ airdrops, title, onEdit, onDelete }: { airdrops: Airdrop
                     className="text-primary hover:underline"
                   >
                     {airdrop.source_link}
+                  </a>
+                </td>
+                <td className="px-4 py-3 max-w-[200px] truncate">
+                  <a 
+                    href={airdrop.image_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-primary hover:underline"
+                  >
+                    {airdrop.image_url}
                   </a>
                 </td>
                 {(onEdit || onDelete) && (
@@ -413,6 +426,7 @@ const initialAirdropValues: AirdropInputs = {
   x: '',
   raised: '',
   source_link: '',
+  image_url: '',
 };
 
 const initialTokenValues: TokenInputs = {

@@ -12,6 +12,7 @@ export interface Airdrop {
   x: string;
   raised: string;
   source_link: string;
+  image_url: string;
   deleted?: boolean;
 }
 

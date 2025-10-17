@@ -10,6 +10,18 @@ const formatNumber = (num: number): string => {
   return new Intl.NumberFormat('en-US').format(num);
 };
 
+// Helper function to filter out duplicate airdrops, keeping the latest one
+const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
+  const airdropMap = new Map<string, Airdrop>();
+  airdrops.forEach(airdrop => {
+    const existing = airdropMap.get(airdrop.project);
+    if (!existing || new Date(airdrop.time_iso) > new Date(existing.time_iso)) {
+      airdropMap.set(airdrop.project, airdrop);
+    }
+  });
+  return Array.from(airdropMap.values());
+};
+
 const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.ReactNode; airdrops: Airdrop[] }) => (
   <div className="mb-10">
     <div className="flex items-center justify-between mb-4">
@@ -37,6 +49,7 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
             <thead>
               <tr className="bg-muted/50 border-b">
                 <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Project</th>
+                <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Icon</th>
                 <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Points</th>
                 <th className="text-center text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Amount</th>
                 <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Time</th>
@@ -56,6 +69,9 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                         {airdrop.alias && <div className="text-sm text-muted-foreground">{airdrop.alias}</div>}
                       </div>
                     </a>
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <img src={airdrop.image_url} alt={airdrop.project} className="w-6 h-6 rounded-full mx-auto" />
                   </td>
                   <td className="px-4 py-4 text-center font-medium">{formatNumber(airdrop.points)}</td>
                   <td className="px-4 py-4 text-center font-medium">${formatNumber(airdrop.amount)}</td>
@@ -105,7 +121,7 @@ const Airdrops = () => {
       setIsLoading(true);
       try {
         const all = await api.getAirdropsByRange('all');
-        setAllAirdrops(all);
+        setAllAirdrops(filterLatestAirdrops(all));
       } catch (error) {
         toast.error('Failed to fetch airdrops');
       } finally {
