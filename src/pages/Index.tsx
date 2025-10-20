@@ -226,7 +226,7 @@ const Index = () => {
       <section className="border-b border-primary/10 bg-gradient-to-br from-primary/10 via-background to-background">
         <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white">
               Alpha Overview
             </p>
             <h1 className="mt-3 text-3xl font-bold text-foreground md:text-4xl">
@@ -236,14 +236,21 @@ const Index = () => {
               Tổng quan chuyên sâu về airdrop, điểm thưởng và dữ liệu giao dịch real-time từ Binance Alpha. Khai thác insight định lượng để đưa ra quyết định nhanh hơn.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <Button asChild>
+              <Button
+                asChild
+                className="border border-[#0c031b] bg-[#0c031b] text-white hover:bg-[#1a0833]"
+              >
                 <Link to="/airdrops" className="inline-flex items-center gap-2">
                   Lịch sử Airdrops
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" onClick={handleScrollToMarketWatch} className="inline-flex items-center gap-2">
-                  Xem Orderbook Cặp X4 Pts
+              <Button
+                variant="outline"
+                onClick={handleScrollToMarketWatch}
+                className="inline-flex items-center gap-2 border-[#0c031b] text-[#0c031b] hover:bg-[#0c031b]/10"
+              >
+                Xem Orderbook Cặp X4 Pts
                 <BarChart3 className="h-4 w-4" />
               </Button>
             </div>
