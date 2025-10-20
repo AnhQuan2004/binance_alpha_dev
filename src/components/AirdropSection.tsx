@@ -99,7 +99,7 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                     {formatNumber(airdrop.points)}
                   </td>
                   <td className="px-5 py-4 text-center font-semibold">
-                    ${formatNumber(airdrop.amount)}
+                    {formatNumber(airdrop.amount)}
                   </td>
                   <td className="px-5 py-4 text-right">
                     <p className="font-medium">
@@ -169,7 +169,7 @@ export const AirdropSection = ({ todaysAirdrops, upcomingAirdrops, isLoading }: 
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid gap-6">
       <AirdropTable title="Today's Airdrops" icon={<Gift className="h-5 w-5" />} airdrops={dedupedToday} />
       <AirdropTable title="Upcoming Airdrops" icon={<Calendar className="h-5 w-5" />} airdrops={dedupedUpcoming} />
     </div>
