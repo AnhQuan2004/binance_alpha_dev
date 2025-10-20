@@ -23,10 +23,10 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, m
 
   const stability = useMemo(() => {
     if (spreadBps === null) return null;
-    if (spreadBps <= 1) return { level: 'Rất ổn định', color: 'text-green-400' };
-    if (spreadBps <= 5) return { level: 'Ổn định vừa', color: 'text-yellow-400' };
-    if (spreadBps <= 15) return { level: 'Biến động nhẹ', color: 'text-orange-400' };
-    return { level: 'Dao động cao / Illiquid', color: 'text-red-400' };
+    if (spreadBps <= 1) return { level: 'Rất ổn định', color: 'text-emerald-300' };
+    if (spreadBps <= 5) return { level: 'Ổn định vừa', color: 'text-amber-300' };
+    if (spreadBps <= 15) return { level: 'Biến động nhẹ', color: 'text-orange-300' };
+    return { level: 'Dao động cao / Illiquid', color: 'text-rose-300' };
   }, [spreadBps]);
 
   // Pass data back to parent component
