@@ -19,7 +19,7 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#1A1A1A",
+        background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         "price-up": "#22C55E",
         "price-down": "#EF4444",

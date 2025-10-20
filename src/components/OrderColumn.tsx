@@ -59,7 +59,7 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, m
   }, [data]);
 
   return (
-    <div className="flex flex-col h-[760px] bg-background rounded-lg overflow-hidden font-sans border border-border">
+    <div className="flex flex-col h-[760px] bg-card rounded-lg overflow-hidden font-sans border border-border">
       {/* Header */}
       <div className="sticky top-0 z-10">
         <div className="px-4 py-3 h-[60px] flex items-center">
