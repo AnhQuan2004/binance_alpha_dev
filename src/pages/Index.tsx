@@ -226,7 +226,7 @@ const Index = () => {
       <section className="border-b border-primary/10 bg-gradient-to-br from-primary/10 via-background to-background">
         <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 md:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#be2ed6]">
               Alpha Overview
             </p>
             <h1 className="mt-3 text-3xl font-bold text-foreground md:text-4xl">
@@ -238,7 +238,7 @@ const Index = () => {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button
                 asChild
-                className="border border-[#0c031b] bg-[#0c031b] text-white hover:bg-[#1a0833]"
+                className="border border-[#be2ed6] bg-[#be2ed6] text-white hover:bg-[#9824ab]"
               >
                 <Link to="/airdrops" className="inline-flex items-center gap-2">
                   Lịch sử Airdrops
@@ -248,7 +248,7 @@ const Index = () => {
               <Button
                 variant="outline"
                 onClick={handleScrollToMarketWatch}
-                className="inline-flex items-center gap-2 border-[#0c031b] text-[#0c031b] hover:bg-[#0c031b]/10"
+                className="inline-flex items-center gap-2 border-[#be2ed6] text-[#be2ed6] hover:bg-[#be2ed6] hover:text-white"
               >
                 Xem Orderbook Cặp X4 Pts
                 <BarChart3 className="h-4 w-4" />

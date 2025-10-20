@@ -21,6 +21,20 @@ interface AlphaInsightsTableProps {
 export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableProps) => {
   const [insights, setInsights] = useState<any[]>([]);
 
+  const recentIds = useMemo(() => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    return insights
+      .filter((insight) => {
+        const insightDate = insight?.date ? new Date(insight.date) : null;
+        if (!insightDate || Number.isNaN(insightDate.getTime())) {
+          return false;
+        }
+        return insightDate >= sevenDaysAgo;
+      })
+      .map((insight) => insight.id);
+  }, [insights]);
+
   useEffect(() => {
     const fetchInsights = async () => {
       try {
@@ -34,28 +48,15 @@ export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableP
     fetchInsights();
   }, []);
 
-  const filteredInsights = useMemo(() => {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const sanitized = insights
-      .filter((insight) => {
-        const insightDate = insight?.date ? new Date(insight.date) : null;
-        if (!insightDate || Number.isNaN(insightDate.getTime())) {
-          return false;
-        }
-        return insightDate >= sevenDaysAgo;
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-      });
-
-    return sanitized;
+  const sortedInsights = useMemo(() => {
+    return [...insights].sort((a, b) => {
+      const dateA = a?.date ? new Date(a.date).getTime() : 0;
+      const dateB = b?.date ? new Date(b.date).getTime() : 0;
+      return dateB - dateA;
+    });
   }, [insights]);
 
-  const displayInsights = filteredInsights.length > 0 ? filteredInsights : [];
+  const recentCount = recentIds.length;
 
   return (
     <div className={cn("mt-8", className)}>
@@ -79,15 +80,24 @@ export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableP
             </TableRow>
           </TableHeader>
           <TableBody>
-            {displayInsights.length === 0 ? (
+            {sortedInsights.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
-                  Chưa có bài viết nào trong 7 ngày gần đây.
+                  Không có bài viết nào được hiển thị.
                 </TableCell>
               </TableRow>
             ) : (
-              displayInsights.map((insight) => (
-                <TableRow key={insight.id}>
+              sortedInsights.map((insight) => {
+                const isRecent = recentIds.includes(insight.id);
+                return (
+                  <TableRow
+                    key={insight.id}
+                    className={cn(
+                      isRecent && recentCount > 0
+                        ? "bg-primary/5 hover:bg-primary/10"
+                        : undefined
+                    )}
+                  >
                   <TableCell className="font-medium">
                     <a href={insight.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                       {insight.title}
@@ -115,7 +125,8 @@ export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableP
                   <TableCell>{insight.description}</TableCell>
                   <TableCell>{insight.date}</TableCell>
                 </TableRow>
-              ))
+              );
+              })
             )}
           </TableBody>
         </Table>
