@@ -393,25 +393,6 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="space-y-4 text-foreground">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Thông tin liên hệ
-              </p>
-              <div className="flex flex-col gap-3 text-sm">
-                <span className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <a href="tel:+84873005958" className="hover:text-primary">
-                    +(84)287 300 5958
-                  </a>
-                </span>
-                <span className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <a href="mailto:contact@gfiresearch.net" className="hover:text-primary">
-                    contact@gfiresearch.net
-                  </a>
-                </span>
-              </div>
-            </div>
 
             <div className="space-y-4 text-foreground">
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
