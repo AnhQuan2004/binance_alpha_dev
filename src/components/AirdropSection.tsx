@@ -1,10 +1,13 @@
 import { Airdrop } from '@/lib/api';
 import { Loader2, ExternalLink, Gift, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { getTimestampFromAirdrop, getAirdropDateLabel, getAirdropTimeLabel } from '@/lib/airdropUtils';
 
 // Helper function to format numbers with commas
-const formatNumber = (num: number): string => {
+const formatNumber = (num: number | null | undefined): string => {
+  if (num === null || num === undefined || Number.isNaN(num)) {
+    return '—';
+  }
   return new Intl.NumberFormat('en-US').format(num);
 };
 
@@ -13,7 +16,7 @@ const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
   const airdropMap = new Map<string, Airdrop>();
   airdrops.forEach(airdrop => {
     const existing = airdropMap.get(airdrop.project);
-    if (!existing || new Date(airdrop.time_iso) > new Date(existing.time_iso)) {
+    if (!existing || getTimestampFromAirdrop(airdrop) > getTimestampFromAirdrop(existing)) {
       airdropMap.set(airdrop.project, airdrop);
     }
   });
@@ -102,12 +105,20 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                     {formatNumber(airdrop.amount)}
                   </td>
                   <td className="px-5 py-4 text-right">
-                    <p className="font-medium">
-                      {format(new Date(airdrop.time_iso), 'MMM d, yyyy')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {format(new Date(airdrop.time_iso), 'h:mm a')}
-                    </p>
+                    {(() => {
+                      const dateLabel = getAirdropDateLabel(airdrop);
+                      const timeLabel = getAirdropTimeLabel(airdrop);
+                      return (
+                        <div>
+                          <p className="font-medium">{dateLabel}</p>
+                          {timeLabel ? (
+                            <p className="text-xs text-muted-foreground">{timeLabel}</p>
+                          ) : (
+                            <p className="text-xs italic text-muted-foreground">Thời gian cập nhật sau</p>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-5 py-4 text-center">
                     <span className={cn(

@@ -24,24 +24,33 @@ import { Check, ChevronsUpDown, ArrowRight, BarChart3, Phone, Mail, Facebook, Yo
 import { cn } from "@/lib/utils"
 import { AlphaInsightsTable } from "@/components/AlphaInsightsTable";
 import { AirdropSection } from "@/components/AirdropSection";
+import { format } from 'date-fns';
+import { getTimestampFromAirdrop, getAirdropTimeLabel } from '@/lib/airdropUtils';
 
 const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
   const airdropMap = new Map<string, Airdrop>();
   airdrops.forEach((airdrop) => {
     const existing = airdropMap.get(airdrop.project);
-    if (!existing || new Date(airdrop.time_iso) > new Date(existing.time_iso)) {
+    if (!existing || getTimestampFromAirdrop(airdrop) > getTimestampFromAirdrop(existing)) {
       airdropMap.set(airdrop.project, airdrop);
     }
   });
   return Array.from(airdropMap.values());
 };
 
-const getMostRecentDate = (airdrops: Airdrop[]): Date | null => {
-  if (!airdrops.length) return null;
-  return airdrops.reduce((latest, current) => {
-    const currentDate = new Date(current.time_iso);
-    return currentDate > latest ? currentDate : latest;
-  }, new Date(airdrops[0].time_iso));
+const getMostRecentDateMeta = (airdrops: Airdrop[]): { date: Date; hasTime: boolean } | null => {
+  let best: { ts: number; hasTime: boolean } | null = null;
+
+  airdrops.forEach((airdrop) => {
+    const ts = getTimestampFromAirdrop(airdrop);
+    if (ts === -Infinity) return;
+    const hasTime = Boolean(getAirdropTimeLabel(airdrop));
+    if (!best || ts > best.ts) {
+      best = { ts, hasTime };
+    }
+  });
+
+  return best ? { date: new Date(best.ts), hasTime: best.hasTime } : null;
 };
 
 const MetricCard = ({
@@ -124,8 +133,8 @@ const Index = () => {
     [historicalAirdrops],
   );
 
-  const latestUpdate = useMemo(
-    () => getMostRecentDate([...dedupedToday, ...dedupedUpcoming, ...dedupedHistorical]),
+  const latestUpdateMeta = useMemo(
+    () => getMostRecentDateMeta([...dedupedToday, ...dedupedUpcoming, ...dedupedHistorical]),
     [dedupedToday, dedupedUpcoming, dedupedHistorical],
   );
 
@@ -159,11 +168,15 @@ const Index = () => {
       },
       {
         label: 'Last Updated',
-        value: latestUpdate ? `${latestUpdate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} • ${latestUpdate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}` : '—',
-        helper: latestUpdate ? 'Cập nhật theo thời gian thực' : 'Chờ dữ liệu mới',
+        value: latestUpdateMeta
+          ? latestUpdateMeta.hasTime
+            ? format(latestUpdateMeta.date, 'MMM d • HH:mm')
+            : format(latestUpdateMeta.date, 'MMM d')
+          : '—',
+        helper: latestUpdateMeta ? 'Cập nhật theo thời gian thực' : 'Chờ dữ liệu mới',
       },
     ],
-    [dedupedToday.length, dedupedUpcoming.length, latestUpdate, isLoadingAirdrops],
+    [dedupedToday.length, dedupedUpcoming.length, latestUpdateMeta, isLoadingAirdrops],
   );
 
   const handleScrollToMarketWatch = () => {

@@ -4,9 +4,11 @@ export interface Airdrop {
   id?: string;
   project: string;
   alias: string;
-  points: number;
-  amount: number;
-  time_iso: string;
+  points: number | null;
+  amount: number | null;
+  event_date: string | null;
+  event_time: string | null;
+  time_iso: string | null;
   timezone: string;
   phase: string;
   x: string;
@@ -63,14 +65,8 @@ export const api = {
     return response.json();
   },
 
-  saveCoinData: async (coinId: string, time: string, price: number): Promise<any> => {
-    const response = await fetch(`https://gfiresearch.dev/api/coins`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ coin_id: coinId, time, price }),
-    });
-    if (!response.ok) throw new Error('Failed to save coin data');
-    return response.json();
+  saveCoinData: async (coinId: string, time: string, price: number): Promise<void> => {
+    // Disabled temporarily
   },
 
   getTokens: async (): Promise<any[]> => {

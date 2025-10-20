@@ -3,10 +3,13 @@ import { api, Airdrop } from '@/lib/api';
 import { History, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { getTimestampFromAirdrop, getAirdropDateLabel, getAirdropTimeLabel } from '@/lib/airdropUtils';
 
 // Helper function to format numbers with commas
-const formatNumber = (num: number): string => {
+const formatNumber = (num: number | null | undefined): string => {
+  if (num === null || num === undefined || Number.isNaN(num)) {
+    return '—';
+  }
   return new Intl.NumberFormat('en-US').format(num);
 };
 
@@ -15,7 +18,7 @@ const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
   const airdropMap = new Map<string, Airdrop>();
   airdrops.forEach(airdrop => {
     const existing = airdropMap.get(airdrop.project);
-    if (!existing || new Date(airdrop.time_iso) > new Date(existing.time_iso)) {
+    if (!existing || getTimestampFromAirdrop(airdrop) > getTimestampFromAirdrop(existing)) {
       airdropMap.set(airdrop.project, airdrop);
     }
   });
@@ -74,10 +77,22 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                     <img src={airdrop.image_url} alt={airdrop.project} className="w-6 h-6 rounded-full mx-auto" />
                   </td>
                   <td className="px-4 py-4 text-center font-medium">{formatNumber(airdrop.points)}</td>
-                  <td className="px-4 py-4 text-center font-medium">${formatNumber(airdrop.amount)}</td>
+                  <td className="px-4 py-4 text-center font-medium">{formatNumber(airdrop.amount)}</td>
                   <td className="px-4 py-4 text-right whitespace-nowrap">
-                    <div className="font-medium">{format(new Date(airdrop.time_iso), 'MMM d, yyyy')}</div>
-                    <div className="text-xs text-muted-foreground">{format(new Date(airdrop.time_iso), 'h:mm a')}</div>
+                    {(() => {
+                      const dateLabel = getAirdropDateLabel(airdrop);
+                      const timeLabel = getAirdropTimeLabel(airdrop);
+                      return (
+                        <div>
+                          <div className="font-medium">{dateLabel}</div>
+                          {timeLabel ? (
+                            <div className="text-xs text-muted-foreground">{timeLabel}</div>
+                          ) : (
+                            <div className="text-xs italic text-muted-foreground">Thời gian cập nhật sau</div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-4 py-4 text-center">
                     <span className={cn(
