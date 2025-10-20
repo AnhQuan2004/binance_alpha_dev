@@ -87,8 +87,8 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, m
             </div>
             {stability && (
               <div className="flex items-center">
-                <span className={`mr-2 ${stability.color}`}>●</span>
-                <span className="text-sm text-subtle-text">{stability.level} ({spreadBps?.toFixed(2)} bps)</span>
+                <span className={`mr-2 text-xs ${stability.color}`}>●</span>
+                <span className="text-xs text-subtle-text">{stability.level} ({spreadBps?.toFixed(2)} bps)</span>
               </div>
             )}
           </div>
