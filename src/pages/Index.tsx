@@ -363,18 +363,15 @@ const Index = () => {
             </div>
 
 
-            <div className="space-y-4 text-foreground">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Kết nối
-              </p>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="text-foreground">
+              <div className="flex items-center gap-2">
                 {socialLinks.map(({ name, url, Icon }) => (
                   <a
                     key={name}
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-12 w-12 items-center justify-center rounded-xl border border-border/70 bg-muted/20 text-foreground transition hover:border-primary hover:bg-primary/10 hover:text-primary"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-muted/20 text-foreground transition hover:border-primary hover:bg-primary hover:text-primary-foreground"
                     aria-label={name}
                   >
                     <Icon className="h-5 w-5" />

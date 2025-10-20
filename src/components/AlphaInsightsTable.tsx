@@ -90,20 +90,20 @@ export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableP
               sortedInsights.map((insight) => {
                 const isRecent = recentIds.includes(insight.id);
                 return (
-                  <TableRow
-                    key={insight.id}
-                    className={cn(
-                      isRecent && recentCount > 0
-                        ? "bg-primary/5 hover:bg-primary/10"
-                        : undefined
-                    )}
-                  >
+                  <TableRow key={insight.id}>
                   <TableCell className="font-medium">
-                    <a href={insight.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      {insight.title}
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a href={insight.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                        {insight.title}
+                      </a>
+                      {isRecent && recentCount > 0 && (
+                        <Badge className="bg-[#be2ed6] text-white hover:bg-[#be2ed6]/90 border-transparent">
+                          Mới
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex items-center gap-2">
                     <Badge
                       variant={
                         insight.category === 'Dự án'
@@ -116,9 +116,11 @@ export const AlphaInsightsTable = ({ introText, className }: AlphaInsightsTableP
                       {insight.category}
                     </Badge>
                   </TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <TokenIcon token={insight.token} imageUrl={insight.imageUrl} />
-                    {insight.token}
+                  <TableCell className="align-middle">
+                    <div className="flex items-center gap-2">
+                      <TokenIcon token={insight.token} imageUrl={insight.imageUrl} className="self-center" />
+                      <span className="leading-none">{insight.token}</span>
+                    </div>
                   </TableCell>
                   <TableCell>{insight.platform}</TableCell>
                   <TableCell>{insight.raised}</TableCell>
