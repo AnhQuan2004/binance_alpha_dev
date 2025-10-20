@@ -140,27 +140,7 @@ const Index = () => {
         name: 'Facebook',
         url: 'https://www.facebook.com/gfiresearch',
         Icon: Facebook,
-      },
-      {
-        name: 'YouTube',
-        url: 'https://www.youtube.com/@GFIResearch',
-        Icon: Youtube,
-      },
-      {
-        name: 'TikTok',
-        url: 'https://www.tiktok.com/@gfiresearch',
-        Icon: Music,
-      },
-      {
-        name: 'Discord',
-        url: 'https://discord.com/invite/DhYw3cgU7U',
-        Icon: Gamepad2,
-      },
-      {
-        name: 'Telegram',
-        url: 'https://t.me/gfi_research_Channel',
-        Icon: Send,
-      },
+      }
     ],
     [],
   );
@@ -258,12 +238,12 @@ const Index = () => {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button asChild>
                 <Link to="/airdrops" className="inline-flex items-center gap-2">
-                  Khám phá Airdrops
+                  Lịch sử Airdrops
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="outline" onClick={handleScrollToMarketWatch} className="inline-flex items-center gap-2">
-                Xem Market Watch
+                  Xem Orderbook Cặp X4 Pts
                 <BarChart3 className="h-4 w-4" />
               </Button>
             </div>
@@ -368,25 +348,7 @@ const Index = () => {
                 </div>
               </div>
 
-              <nav className="flex flex-wrap gap-3 text-foreground/80">
-                <a
-                  href="https://gfiresearch.net/about-us"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary"
-                >
-                  About
-                </a>
-                <span className="text-muted-foreground/50">/</span>
-                <a
-                  href="https://gfiresearch.net/terms-of-service"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary"
-                >
-                  Research Policy
-                </a>
-              </nav>
+              
 
               <p className="text-xs text-muted-foreground/80">
                 Data sourced from Binance Alpha API &amp; GFI internal analytics.
