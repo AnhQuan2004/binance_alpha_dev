@@ -51,18 +51,18 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full table-fixed">
             <thead>
               <tr className="border-b bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                <th className="px-5 py-3 text-left font-medium">Project</th>
-                <th className="px-5 py-3 text-center font-medium">Icon</th>
-                <th className="px-5 py-3 text-center font-medium">Points</th>
-                <th className="px-5 py-3 text-center font-medium">Amount</th>
-                <th className="px-5 py-3 text-right font-medium">Time</th>
-                <th className="px-5 py-3 text-center font-medium">Phase</th>
-                <th className="px-5 py-3 text-center font-medium">Raised</th>
-                <th className="px-5 py-3 text-left font-medium">Source</th>
+                <th className="w-[18%] px-5 py-3 text-left font-medium">Project</th>
+                <th className="w-[8%] px-5 py-3 text-left font-medium">Icon</th>
+                <th className="w-[10%] px-5 py-3 text-left font-medium">Points</th>
+                <th className="w-[10%] px-5 py-3 text-left font-medium">Amount</th>
+                <th className="w-[20%] px-5 py-3 text-left font-medium">Time</th>
+                <th className="w-[12%] px-5 py-3 text-left font-medium">Phase</th>
+                <th className="w-[12%] px-5 py-3 text-left font-medium">Raised</th>
+                <th className="w-[10%] px-5 py-3 text-left font-medium">Source</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/70">
@@ -71,7 +71,7 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                   key={`${airdrop.id ?? airdrop.project}-${airdrop.time_iso}`}
                   className="transition-colors hover:bg-muted/40"
                 >
-                  <td className="px-5 py-4">
+                  <td className="px-5 py-4 text-left">
                     <a
                       href={airdrop.x}
                       target="_blank"
@@ -91,20 +91,20 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                       </div>
                     </a>
                   </td>
-                  <td className="px-5 py-4 text-center">
+                  <td className="px-5 py-4 text-left">
                     <img
                       src={airdrop.image_url}
                       alt={airdrop.project}
-                      className="mx-auto h-8 w-8 rounded-full object-cover"
+                      className="h-8 w-8 rounded-full object-cover"
                     />
                   </td>
-                  <td className="px-5 py-4 text-center font-semibold">
+                  <td className="px-5 py-4 text-left font-semibold">
                     {formatNumber(airdrop.points)}
                   </td>
-                  <td className="px-5 py-4 text-center font-semibold">
+                  <td className="px-5 py-4 text-left font-semibold">
                     {formatNumber(airdrop.amount)}
                   </td>
-                  <td className="px-5 py-4 text-right">
+                  <td className="px-5 py-4 text-left align-middle whitespace-nowrap">
                     {(() => {
                       const dateLabel = getAirdropDateLabel(airdrop);
                       const timeLabel = getAirdropTimeLabel(airdrop);
@@ -120,7 +120,7 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                       );
                     })()}
                   </td>
-                  <td className="px-5 py-4 text-center">
+                  <td className="px-5 py-4 text-left">
                     <span className={cn(
                       'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
                       airdrop.phase.toLowerCase().includes('1')
@@ -134,10 +134,10 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                       {airdrop.phase}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-center font-semibold">
+                  <td className="px-5 py-4 text-left font-semibold">
                     {airdrop.raised}
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-5 py-4 text-left">
                     <a 
                       href={airdrop.source_link} 
                       target="_blank" 
