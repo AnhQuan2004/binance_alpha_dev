@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { api, Airdrop } from '@/lib/api';
 import { History, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
@@ -25,18 +25,43 @@ const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
   return Array.from(airdropMap.values());
 };
 
-const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.ReactNode; airdrops: Airdrop[] }) => (
+const AirdropTable = ({
+  title,
+  icon,
+  airdrops,
+  searchValue,
+  onSearchChange,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  airdrops: Airdrop[];
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+}) => (
   <div className="mb-10">
-    <div className="flex items-center justify-between mb-4">
-      <h2 className="flex items-center text-xl font-bold">
-        {icon}
-        <span className="ml-2">{title}</span>
-      </h2>
-      <div className="text-sm text-muted-foreground">
-        {airdrops.length} {airdrops.length === 1 ? 'airdrop' : 'airdrops'}
+    <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-2">
+        <h2 className="flex items-center text-xl font-bold">
+          {icon}
+          <span className="ml-2">{title}</span>
+        </h2>
+        <div className="text-sm text-muted-foreground">
+          {airdrops.length} {airdrops.length === 1 ? 'airdrop' : 'airdrops'}
+        </div>
       </div>
+      {onSearchChange && (
+        <div className="w-full sm:w-72">
+          <input
+            type="text"
+            value={searchValue ?? ''}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search airdrops..."
+            className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          />
+        </div>
+      )}
     </div>
-    
+
     <div className="bg-card border rounded-lg shadow-sm overflow-hidden">
       {airdrops.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -147,6 +172,23 @@ const Airdrops = () => {
     fetchAirdrops();
   }, []);
 
+  const [searchValue, setSearchValue] = useState('');
+
+  const filteredAirdrops = useMemo(() => {
+    const query = searchValue.trim().toLowerCase();
+    if (!query) return allAirdrops;
+    return allAirdrops.filter((airdrop) => {
+      const fields = [
+        airdrop.project,
+        airdrop.alias,
+        airdrop.phase,
+        airdrop.x,
+        airdrop.source_link,
+      ];
+      return fields.some((field) => field?.toLowerCase().includes(query));
+    });
+  }, [allAirdrops, searchValue]);
+
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
@@ -161,7 +203,13 @@ const Airdrops = () => {
         </div>
       ) : (
         <>
-          <AirdropTable title="Airdrop History" icon={<History className="h-5 w-5 text-primary" />} airdrops={allAirdrops} />
+          <AirdropTable
+            title="Airdrop History"
+            icon={<History className="h-5 w-5 text-primary" />}
+            airdrops={filteredAirdrops}
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+          />
         </>
       )}
     </div>

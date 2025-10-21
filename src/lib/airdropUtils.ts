@@ -63,7 +63,8 @@ export const getAirdropTimeLabel = (airdrop: Airdrop): string | null => {
     }
   }
 
-  if (airdrop.time_iso && hasTimeComponent(airdrop.time_iso)) {
+  // For legacy entries that only store time in time_iso (no event_date provided)
+  if (!airdrop.event_date && airdrop.time_iso && hasTimeComponent(airdrop.time_iso)) {
     const date = new Date(airdrop.time_iso);
     if (!Number.isNaN(date.getTime())) {
       return format(date, 'h:mm a');
@@ -72,4 +73,3 @@ export const getAirdropTimeLabel = (airdrop: Airdrop): string | null => {
 
   return null;
 };
-

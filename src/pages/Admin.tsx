@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { api, Airdrop } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -106,10 +106,27 @@ const Admin = () => {
   const [editingAirdrop, setEditingAirdrop] = useState<Airdrop | null>(null);
   const [allTokens, setAllTokens] = useState<any[]>([]);
   const [editingToken, setEditingToken] = useState<any | null>(null);
+  const [airdropSearch, setAirdropSearch] = useState('');
 
   const eventDateValue = watch('event_date');
   const eventTimeValue = watch('event_time');
   const eventTimeIsoValue = watch('time_iso');
+
+  const filteredActiveAirdrops = useMemo(() => {
+    const query = airdropSearch.trim().toLowerCase();
+    return allAirdrops.filter((airdrop) => {
+      if (airdrop.deleted) return false;
+      if (!query) return true;
+      const fields = [
+        airdrop.project,
+        airdrop.alias,
+        airdrop.phase,
+        airdrop.x,
+        airdrop.source_link,
+      ];
+      return fields.some((field) => field?.toLowerCase().includes(query));
+    });
+  }, [allAirdrops, airdropSearch]);
 
   const registerAirdropField = (field: keyof AirdropInputs) => {
     if (field === 'points' || field === 'amount') {
@@ -326,7 +343,14 @@ const Admin = () => {
         </form>
       </div>
 
-      <AirdropTable title="All Airdrops" airdrops={allAirdrops.filter(airdrop => !airdrop.deleted)} onEdit={handleAirdropEdit} onDelete={handleAirdropDelete} />
+      <AirdropTable
+        title="All Airdrops"
+        airdrops={filteredActiveAirdrops}
+        onEdit={handleAirdropEdit}
+        onDelete={handleAirdropDelete}
+        searchValue={airdropSearch}
+        onSearchChange={setAirdropSearch}
+      />
       <AirdropTable title="Deleted Airdrops" airdrops={deletedAirdrops} />
       <TokenTable title="All Tokens" tokens={allTokens} onEdit={handleTokenEdit} onDelete={handleTokenDelete} />
       <AlphaInsightsAdmin />
@@ -334,13 +358,39 @@ const Admin = () => {
   );
 };
 
-const AirdropTable = ({ airdrops, title, onEdit, onDelete }: { airdrops: Airdrop[], title: string, onEdit?: (airdrop: Airdrop) => void, onDelete?: (id: string) => void }) => (
+const AirdropTable = ({
+  airdrops,
+  title,
+  onEdit,
+  onDelete,
+  searchValue,
+  onSearchChange,
+}: {
+  airdrops: Airdrop[];
+  title: string;
+  onEdit?: (airdrop: Airdrop) => void;
+  onDelete?: (id: string) => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+}) => (
   <div className="mb-8 bg-card rounded-lg border shadow-sm overflow-hidden">
-    <div className="p-4 border-b">
-      <h2 className="text-xl font-semibold">{title}</h2>
-      <p className="text-sm text-muted-foreground mt-1">{airdrops.length} airdrops found</p>
+    <div className="p-4 border-b flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 className="text-xl font-semibold">{title}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{airdrops.length} airdrops found</p>
+      </div>
+      {onSearchChange && (
+        <div className="w-full sm:w-64">
+          <Input
+            value={searchValue ?? ''}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search by project, alias, phase, or link..."
+            className="h-9"
+          />
+        </div>
+      )}
     </div>
-    
+
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
@@ -503,8 +553,8 @@ const DateTimePicker = ({
 
   const computeIso = (eventDateString: string | null, sanitizedTime: string | null) => {
     if (!eventDateString) return null;
-    const baseTime = sanitizedTime ?? '00:00:00';
-    const dateObj = new Date(`${eventDateString}T${baseTime}`);
+    if (!sanitizedTime) return null;
+    const dateObj = new Date(`${eventDateString}T${sanitizedTime}`);
     const ts = dateObj.getTime();
     return Number.isNaN(ts) ? null : dateObj.toISOString();
   };
