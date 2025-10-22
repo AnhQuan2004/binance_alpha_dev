@@ -51,11 +51,83 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto w-full">
-          <table className="w-full table-fixed">
-            <thead>
-              <tr className="border-b bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                <th className="w-[18%] px-5 py-3 text-left font-medium">Project</th>
+        <>
+          <div className="md:hidden divide-y divide-border/70">
+            {airdrops.map((airdrop) => {
+              const dateLabel = getAirdropDateLabel(airdrop);
+              const timeLabel = getAirdropTimeLabel(airdrop);
+              return (
+                <div key={`${airdrop.id ?? airdrop.project}-${airdrop.time_iso}`} className="px-4 py-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <a
+                        href={airdrop.x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 hover:text-primary"
+                      >
+                        <img src="/x.png" alt="X" className="h-4 w-4 rounded-full bg-muted p-[1px]" />
+                        <div>
+                          <p className="font-semibold leading-tight">{airdrop.project}</p>
+                          {airdrop.alias && <p className="text-xs text-muted-foreground">{airdrop.alias}</p>}
+                        </div>
+                      </a>
+                    </div>
+                    <img
+                      src={airdrop.image_url}
+                      alt={airdrop.project}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+                    <div>
+                      <p className="uppercase tracking-wide">Points</p>
+                      <p className="text-sm font-medium text-foreground">{formatNumber(airdrop.points)}</p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wide">Amount</p>
+                      <p className="text-sm font-medium text-foreground">{formatNumber(airdrop.amount)}</p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wide">Time</p>
+                      <p className="text-sm font-medium text-foreground">{dateLabel}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {timeLabel || 'Thời gian cập nhật sau'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wide">Phase</p>
+                      <p className="mt-1 inline-flex rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                        {airdrop.phase || '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wide">Raised</p>
+                      <p className="text-sm font-medium text-foreground">{airdrop.raised || '—'}</p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wide">Source</p>
+                      <a
+                        href={airdrop.source_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-primary hover:underline gap-1 text-sm"
+                      >
+                        <span>Source</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto w-full">
+            <table className="w-full table-fixed">
+              <thead>
+                <tr className="border-b bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
+                  <th className="w-[18%] px-5 py-3 text-left font-medium">Project</th>
                 <th className="w-[8%] px-5 py-3 text-left font-medium">Icon</th>
                 <th className="w-[10%] px-5 py-3 text-left font-medium">Points</th>
                 <th className="w-[10%] px-5 py-3 text-left font-medium">Amount</th>
@@ -152,7 +224,8 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   </section>
