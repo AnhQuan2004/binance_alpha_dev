@@ -175,6 +175,7 @@ const Admin = () => {
     const normalizedEventDate = normalizeStringField(data.event_date);
     const normalizedEventTime = normalizeStringField(data.event_time);
     const normalizedIso = normalizeStringField(data.time_iso);
+    const normalizedNews = normalizeStringField(data.news);
 
     const payload: AirdropInputs = {
       ...data,
@@ -183,21 +184,46 @@ const Admin = () => {
       event_date: normalizedEventDate,
       event_time: normalizedEventTime,
       time_iso: normalizedIso,
+      news: normalizedNews,
     };
+    
+    // Debug payload
+    console.log('Airdrop payload:', payload);
+    // Prepare a clean payload with only the required fields
+    const cleanPayload = {
+      project: payload.project,
+      alias: payload.alias,
+      points: payload.points || 0,
+      amount: payload.amount || 0,
+      event_date: payload.event_date || null,
+      event_time: payload.event_time || null,
+      time_iso: payload.time_iso || null,
+      timezone: payload.timezone || "Asia/Ho_Chi_Minh",
+      phase: payload.phase || "",
+      x: payload.x || "",
+      raised: payload.raised || "",
+      source_link: payload.source_link || "",
+      image_url: payload.image_url || "",
+      news: payload.news || null
+    };
+    
+    console.log('Clean payload:', cleanPayload);
+    
     try {
       if (editingAirdrop) {
-        const updatedAirdrop = await api.updateAirdrop(editingAirdrop.id!, payload);
+        const updatedAirdrop = await api.updateAirdrop(editingAirdrop.id!, cleanPayload);
         setAllAirdrops(allAirdrops.map(a => a.id === editingAirdrop.id ? updatedAirdrop : a));
         toast.success('Airdrop updated successfully');
       } else {
-        const newAirdrop = await api.createAirdrop(payload);
+        const newAirdrop = await api.createAirdrop(cleanPayload);
         setAllAirdrops([...allAirdrops, newAirdrop]);
         toast.success('Airdrop created successfully');
       }
       reset(initialAirdropValues);
       setEditingAirdrop(null);
     } catch (error) {
-      toast.error('Failed to save airdrop');
+      console.error('API Error:', error);
+      toast.error('Failed to save airdrop. Check console for details.');
       fetchAirdrops(); // Fallback to refetching on error
     }
   };
@@ -282,6 +308,12 @@ const Admin = () => {
                   />
                 ) : ['source_link', 'image_url'].includes(key) ? (
                   <Input id={key} {...register(key as keyof AirdropInputs)} placeholder="https://..." />
+                ) : key === 'news' ? (
+                  <Input 
+                    id={key} 
+                    {...register(key as keyof AirdropInputs)} 
+                    placeholder="News update for the airdrop" 
+                  />
                 ) : (
                   <Input 
                     id={key} 
@@ -396,6 +428,7 @@ const AirdropTable = ({
         <thead>
           <tr className="bg-muted/50 border-b">
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Project</th>
+            <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">News</th>
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Points</th>
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Amount</th>
             <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Time</th>
@@ -420,6 +453,9 @@ const AirdropTable = ({
             airdrops.map((airdrop) => (
               <tr key={airdrop.id} className="hover:bg-muted/50 transition-colors">
                 <td className="px-4 py-3 whitespace-nowrap font-medium">{airdrop.project}</td>
+                <td className="px-4 py-3 max-w-[200px]">
+                  <div className="line-clamp-2">{airdrop.news || '—'}</div>
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap">{airdrop.points ?? '—'}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{airdrop.amount ?? '—'}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{formatDateTimeDisplay(airdrop)}</td>
@@ -672,6 +708,7 @@ const initialAirdropValues: AirdropInputs = {
   raised: '',
   source_link: '',
   image_url: '',
+  news: '',
 };
 
 const initialTokenValues: TokenInputs = {

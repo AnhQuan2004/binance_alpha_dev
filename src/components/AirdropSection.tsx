@@ -24,7 +24,7 @@ const filterLatestAirdrops = (airdrops: Airdrop[]): Airdrop[] => {
 };
 
 const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.ReactNode; airdrops: Airdrop[] }) => (
-  <section className="rounded-3xl border bg-card shadow-sm">
+  <section className="rounded-3xl border bg-card shadow-sm max-w-full">
     <header className="flex items-center justify-between border-b px-6 py-4">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -59,26 +59,46 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
               return (
                 <div key={`${airdrop.id ?? airdrop.project}-${airdrop.time_iso}`} className="px-4 py-4 space-y-3">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={airdrop.image_url}
+                        alt={airdrop.project}
+                        className="h-7 w-7 rounded-full object-cover"
+                      />
                       <a
                         href={airdrop.x}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 hover:text-primary"
                       >
-                        <img src="/x.png" alt="X" className="h-4 w-4 rounded-full bg-muted p-[1px]" />
                         <div>
                           <p className="font-semibold leading-tight">{airdrop.project}</p>
                           {airdrop.alias && <p className="text-xs text-muted-foreground">{airdrop.alias}</p>}
                         </div>
                       </a>
                     </div>
-                    <img
-                      src={airdrop.image_url}
-                      alt={airdrop.project}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
+                    <img src="/x.png" alt="X" className="h-4 w-4 rounded-full bg-muted p-[1px]" />
                   </div>
+                  
+                  {airdrop.news && (
+                    <div className="bg-muted/30 p-2 rounded-md mt-2">
+                      <p className="text-sm font-medium text-foreground">Thông tin dự án</p>
+                      {airdrop.news.startsWith('http') ? (
+                        <a 
+                          href={airdrop.news} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-sm text-primary hover:underline"
+                        >
+                          <span className="inline-flex rounded-full bg-green-500/20 px-2.5 py-1 text-sm font-medium text-green-300 italic whitespace-nowrap">
+                            Check thông tin dự án
+                          </span>
+                        </a>
+                      ) : (
+                        <p className="text-sm">{airdrop.news}</p>
+                      )}
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
                     <div>
                       <p className="uppercase tracking-wide">Points</p>
@@ -123,60 +143,77 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
             })}
           </div>
 
-          <div className="hidden md:block overflow-x-auto w-full">
-            <table className="w-full table-fixed">
+          <div className="hidden md:block w-full">
+            <table className="w-full table-fixed min-w-full">
               <thead>
                 <tr className="border-b bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="w-[18%] px-5 py-3 text-left font-medium">Project</th>
-                <th className="w-[8%] px-5 py-3 text-left font-medium">Icon</th>
-                <th className="w-[10%] px-5 py-3 text-left font-medium">Points</th>
-                <th className="w-[10%] px-5 py-3 text-left font-medium">Amount</th>
-                <th className="w-[20%] px-5 py-3 text-left font-medium">Time</th>
-                <th className="w-[12%] px-5 py-3 text-left font-medium">Phase</th>
-                <th className="w-[12%] px-5 py-3 text-left font-medium">Raised</th>
-                <th className="w-[10%] px-5 py-3 text-left font-medium">Source</th>
-              </tr>
-            </thead>
+                  <th className="w-[14%] px-3 py-3 text-left font-medium">Project</th>
+                  <th className="w-[18%] px-3 py-3 text-left font-medium">Thông tin dự án</th>
+                  <th className="w-[8%] px-3 py-3 text-left font-medium">Points</th>
+                  <th className="w-[8%] px-3 py-3 text-left font-medium">Amount</th>
+                  <th className="w-[16%] px-3 py-3 text-left font-medium">Time</th>
+                  <th className="w-[10%] px-3 py-3 text-left font-medium">Phase</th>
+                  <th className="w-[10%] px-3 py-3 text-left font-medium">Raised</th>
+                  <th className="w-[8%] px-3 py-3 text-left font-medium">Source</th>
+                </tr>
+              </thead>
             <tbody className="divide-y divide-border/70">
               {airdrops.map((airdrop) => (
                 <tr
                   key={`${airdrop.id ?? airdrop.project}-${airdrop.time_iso}`}
                   className="transition-colors hover:bg-muted/40"
                 >
-                  <td className="px-5 py-4 text-left">
-                    <a
-                      href={airdrop.x}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 hover:text-primary"
-                    >
+                  <td className="px-3 py-4 text-left">
+                    <div className="flex items-center gap-2">
                       <img
-                        src="/x.png"
-                        alt="X"
-                        className="h-5 w-5 rounded-full bg-muted p-[2px]"
+                        src={airdrop.image_url}
+                        alt={airdrop.project}
+                        className="h-7 w-7 rounded-full object-cover"
                       />
-                      <div>
-                        <p className="font-medium leading-tight">{airdrop.project}</p>
-                        {airdrop.alias && (
-                          <p className="text-xs text-muted-foreground">{airdrop.alias}</p>
+                      <a
+                        href={airdrop.x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 hover:text-primary"
+                      >
+                        <div>
+                          <p className="font-medium leading-tight">{airdrop.project}</p>
+                          {airdrop.alias && (
+                            <p className="text-xs text-muted-foreground">{airdrop.alias}</p>
+                          )}
+                        </div>
+                      </a>
+                    </div>
+                  </td>
+                  <td className="px-3 py-4 text-left">
+                    {airdrop.news ? (
+                      <div className="text-sm">
+                        {airdrop.news.startsWith('http') ? (
+                          <a 
+                            href={airdrop.news} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-primary hover:underline line-clamp-2"
+                          >
+                            <span className="inline-flex rounded-full bg-green-500/20 px-2.5 py-1 text-sm font-medium text-green-300 italic whitespace-nowrap">
+                              Check thông tin dự án
+                            </span>
+                          </a>
+                        ) : (
+                          <p className="line-clamp-2">{airdrop.news}</p>
                         )}
                       </div>
-                    </a>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
-                  <td className="px-5 py-4 text-left">
-                    <img
-                      src={airdrop.image_url}
-                      alt={airdrop.project}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                  </td>
-                  <td className="px-5 py-4 text-left font-semibold">
+                  <td className="px-3 py-4 text-left font-semibold">
                     {formatNumber(airdrop.points)}
                   </td>
-                  <td className="px-5 py-4 text-left font-semibold">
+                  <td className="px-3 py-4 text-left font-semibold">
                     {formatNumber(airdrop.amount)}
                   </td>
-                  <td className="px-5 py-4 text-left align-middle whitespace-nowrap">
+                  <td className="px-3 py-4 text-left align-middle whitespace-nowrap">
                     {(() => {
                       const dateLabel = getAirdropDateLabel(airdrop);
                       const timeLabel = getAirdropTimeLabel(airdrop);
@@ -192,24 +229,24 @@ const AirdropTable = ({ title, icon, airdrops }: { title: string; icon: React.Re
                       );
                     })()}
                   </td>
-                  <td className="px-5 py-4 text-left">
+                  <td className="px-3 py-4 text-left">
                     <span className={cn(
                       'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-                      airdrop.phase.toLowerCase().includes('1')
+                      airdrop.phase && typeof airdrop.phase === 'string' && airdrop.phase.toLowerCase().includes('1')
                         ? 'bg-blue-500/15 text-blue-300'
-                        : airdrop.phase.toLowerCase().includes('2')
+                        : airdrop.phase && typeof airdrop.phase === 'string' && airdrop.phase.toLowerCase().includes('2')
                         ? 'bg-purple-500/15 text-purple-300'
-                        : airdrop.phase.toLowerCase().includes('3')
+                        : airdrop.phase && typeof airdrop.phase === 'string' && airdrop.phase.toLowerCase().includes('3')
                         ? 'bg-amber-500/15 text-amber-300'
                         : 'bg-muted text-muted-foreground'
                     )}>
-                      {airdrop.phase}
+                      {airdrop.phase || '—'}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-left font-semibold">
+                  <td className="px-3 py-4 text-left font-semibold">
                     {airdrop.raised}
                   </td>
-                  <td className="px-5 py-4 text-left">
+                  <td className="px-3 py-4 text-left">
                     <a 
                       href={airdrop.source_link} 
                       target="_blank" 

@@ -15,6 +15,7 @@ export interface Airdrop {
   raised: string;
   source_link: string;
   image_url: string;
+  news?: string;
   deleted?: boolean;
 }
 
@@ -25,7 +26,13 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(airdrop),
     });
-    if (!response.ok) throw new Error('Failed to create airdrop');
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('API Error Response:', response.status, errorData);
+      throw new Error(`Failed to create airdrop: ${response.status} ${errorData}`);
+    }
+    
     return response.json();
   },
 
