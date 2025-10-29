@@ -243,10 +243,10 @@ const Index = () => {
               Alpha Overview
             </p>
             <h1 className="mt-3 text-3xl font-bold text-foreground md:text-4xl">
-              GFI Research — Binance Alpha Dashboard
+            GFI Research Alpha Dasboard: Calendar & Real-time Tracking
             </h1>
             <p className="mt-4 text-base text-muted-foreground md:text-lg">
-              Tổng quan chuyên sâu về airdrop, điểm thưởng và dữ liệu giao dịch real-time từ Binance Alpha. Khai thác insight định lượng để đưa ra quyết định nhanh hơn.
+            GFI Research Alpha Dasboard - Nền tảng Tracking thông tin Binance Alpha, OKX Boots, cập nhật nhanh nhất các dự án được Listing và Lịch sử Alpha, Boots chính xác
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button

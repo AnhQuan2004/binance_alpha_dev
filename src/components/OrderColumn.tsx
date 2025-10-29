@@ -65,9 +65,9 @@ function OrderColumnComponent({ token, apiUrl, staggerDelay = 0, onDataUpdate, m
         <div className="px-4 py-3 h-[60px] flex items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-semibold text-foreground">
+              <h3 className="text-lg font-semibold text-foreground">
                 {token}
-              </h2>
+              </h3>
               {multiplier && (
                 <TooltipProvider>
                   <Tooltip>
